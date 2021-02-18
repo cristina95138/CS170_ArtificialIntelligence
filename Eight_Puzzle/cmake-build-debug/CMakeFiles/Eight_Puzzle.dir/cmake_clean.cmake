@@ -1,4 +1,6 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/Eight_Puzzle.dir/Node.cpp.o"
+  "CMakeFiles/Eight_Puzzle.dir/Tree.cpp.o"
   "CMakeFiles/Eight_Puzzle.dir/main.cpp.o"
   "Eight_Puzzle"
   "Eight_Puzzle.pdb"

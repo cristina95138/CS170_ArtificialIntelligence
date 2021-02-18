@@ -13,7 +13,7 @@ Tree::Tree() {
 
 void Tree::preOrder(Node *curr) const {
     if (curr != nullptr) {
-        cout << curr->data << "(" << curr->count << "), ";
+        cout << curr->cost << "(" << curr->depth << "), ";
         preOrder(curr->left);
         preOrder(curr->right);
     }
@@ -22,7 +22,7 @@ void Tree::preOrder(Node *curr) const {
 void Tree::inOrder(Node *curr) const {
     if (curr != nullptr) {
         inOrder(curr->left);
-        cout << curr->data << "(" << curr->count << "), ";
+        cout << curr->cost << "(" << curr->depth << "), ";
         inOrder(curr->right);
     }
 }
@@ -31,37 +31,37 @@ void Tree::postOrder(Node *curr) const {
     if (curr != nullptr) {
         postOrder(curr->left);
         postOrder(curr->right);
-        cout << curr->data << "(" << curr->count << "), ";
+        cout << curr->cost << "(" << curr->depth << "), ";
     }
 }
 
-void Tree::remove(Node *prev, Node* curr, string data) {
+void Tree::remove(Node *prev, Node* curr, int cost) {
 
     if (curr == nullptr) {
         return;
     }
-    else if(curr->data == data){
-        if(curr->count > 1 && curr->data != prev->data){
-            curr->count = curr->count - 1;
+    else if(curr->cost == cost){
+        if(curr->depth > 1 && curr->cost != prev->cost){
+            curr->depth = curr->depth - 1;
             return;
         }
-        if(curr == root && curr->count > 1){
-            curr->count = curr->count - 1;
+        if(curr == root && curr->depth > 1){
+            curr->depth = curr->depth - 1;
             return;
         }
         else if(!curr->right && !curr->left) {
 
-            if(curr->data > prev->data) {
+            if(curr->cost > prev->cost) {
                 prev->right = nullptr;
                 delete curr;
                 return;
             }
-            else if(curr->data < prev->data) {
+            else if(curr->cost < prev->cost) {
                 prev->left = nullptr;
                 delete curr;
                 return;
             }
-            else if(curr->data == prev->data) {
+            else if(curr->cost == prev->cost) {
                 if(prev->right == nullptr){
                     prev->left = nullptr;
                     delete curr;
@@ -71,11 +71,11 @@ void Tree::remove(Node *prev, Node* curr, string data) {
                     delete curr;
                 }
                 else if(prev->right && prev->left){
-                    if(curr->data == prev->left->data){
+                    if(curr->cost == prev->left->cost){
                         prev->left = nullptr;
                         delete curr;
                     }
-                    else if(curr->data == prev->right->data){
+                    else if(curr->cost == prev->right->cost){
                         prev->right = nullptr;
                         delete curr;
                     }
@@ -84,36 +84,36 @@ void Tree::remove(Node *prev, Node* curr, string data) {
         }
         else if((curr->left != nullptr && curr->right != nullptr) || (curr->left != nullptr && curr->right == nullptr)){
             Node* temp = max(curr->left);
-            curr->data = temp->data;
-            curr->count = temp->count;
-            remove(curr, curr->left, curr->data);
+            curr->cost = temp->cost;
+            curr->depth = temp->depth;
+            remove(curr, curr->left, curr->cost);
         }
         else if(!curr->left && curr->right){
             Node *temp = min(curr->right);
-            curr->data = temp->data;
-            curr->count = temp->count;
-            remove(curr, curr-> right, curr->data);
+            curr->cost = temp->cost;
+            curr->depth = temp->depth;
+            remove(curr, curr-> right, curr->cost);
         }
     }
-    else if(curr->data < data){
-        remove(curr, curr->right, data);
+    else if(curr->cost < cost){
+        remove(curr, curr->right, cost);
     }
-    else if (curr->data > data) {
-        remove(curr, curr->left, data);
+    else if (curr->cost > cost) {
+        remove(curr, curr->left, cost);
     }
 }
 
-Node * Tree::search(const string &data, Node *curr) const {
+Node * Tree::search(const int &cost, Node *curr) const {
     if (curr != nullptr) {
-        if (data == curr->data) {
+        if (cost == curr->cost) {
             return curr;
         }
         else {
-            if (data < curr->data) {
-                return search(data, curr->left);
+            if (cost < curr->cost) {
+                return search(cost, curr->left);
             }
             else {
-                return search(data, curr->right);
+                return search(cost, curr->right);
             }
         }
     }
@@ -122,23 +122,23 @@ Node * Tree::search(const string &data, Node *curr) const {
     }
 }
 
-void Tree::insert(const int &data) {
+void Tree::insert(const int &cost) {
     Node* curr = root;
     Node* newN = nullptr;
 
-    if (search(data)) {
-        curr = search(data, root);
-        curr->count = curr->count + 1;
+    if (search(cost)) {
+        curr = search(cost, root);
+        curr->depth = curr->depth + 1;
     }
     else {
-        newN = new Node(data);
+        newN = new Node(cost);
 
         if (root == nullptr) {
             root = newN;
         }
         else {
             while (1) {
-                if (data < curr->data) {
+                if (cost < curr->cost) {
                     if (curr->left == nullptr) {
                         curr->left = newN;
                         newN->parent = curr;
@@ -161,8 +161,8 @@ void Tree::insert(const int &data) {
     }
 }
 
-bool Tree::search(const string &data) const {
-    return search(data, root);
+bool Tree::search(const int &cost) const {
+    return search(cost, root);
 }
 
 void Tree::inOrder() const {
@@ -180,16 +180,16 @@ void Tree::preOrder() const {
     cout << endl;
 }
 
-string Tree::largest() const {
+int Tree::largest() const {
     Node* curr = root;
 
     if (curr == nullptr) {
-        return "";
+        return 0;
     }
     else {
         while(1) {
             if (curr->right == nullptr) {
-                return curr->data;
+                return curr->cost;
             }
             else {
                 curr = curr->right;
@@ -198,16 +198,16 @@ string Tree::largest() const {
     }
 }
 
-string Tree::smallest() const {
+int Tree::smallest() const {
     Node* curr = root;
 
     if (curr == nullptr) {
-        return "";
+        return 0;
     }
     else {
         while(1) {
             if (curr->left == nullptr) {
-                return curr->data;
+                return curr->cost;
             }
             else {
                 curr = curr->left;
@@ -217,13 +217,13 @@ string Tree::smallest() const {
 
 }
 
-int Tree::height(const string &data) const {
+int Tree::height(const int &cost) const {
 
-    if (!search(data)) {
+    if (!search(cost)) {
         return -1;
     }
 
-    Node* curr = search(data, root);
+    Node* curr = search(cost, root);
     Node* currL = curr;
     Node* currR = curr;
     int countL = 0;
@@ -232,13 +232,13 @@ int Tree::height(const string &data) const {
     if (curr->left != nullptr) {
         currL = currL->left;
         countL++;
-        countL = countL + height(currL->data);
+        countL = countL + height(currL->cost);
     }
 
     if (curr->right != nullptr) {
         currR = currR->right;
         countR++;
-        countR = countR + height(currR->data);
+        countR = countR + height(currR->cost);
     }
 
     if (countL >= countR) {
@@ -249,17 +249,17 @@ int Tree::height(const string &data) const {
     }
 }
 
-void Tree::remove(const string &data) {
+void Tree::remove(const int &cost) {
 
     if (root == nullptr) {
         return;
     }
-    else if ((!root->right && !root->left) && (root->data == data)) {
+    else if ((!root->right && !root->left) && (root->cost == cost)) {
         delete root;
         root = nullptr;
         return;
     }
-    remove(root, root, data);
+    remove(root, root, cost);
 }
 
 Node * Tree::min(Node *curr)const {

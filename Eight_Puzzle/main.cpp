@@ -1,4 +1,5 @@
 #include "Tree.h"
+#include "Node.h"
 
 #include <iostream>
 #include <vector>
@@ -10,37 +11,79 @@ bool goal() {
 
 void expand() {}
 
-void uniformCostSearch() {
-    vector<vector<int>> goal = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
-}
-
-void misplaced() {
+int uniformCostSearch(vector<vector<int>> problem) {
     vector<vector<int>> goal = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
 
+    return 0;
 }
 
-void manhattan() {
+int misplaced(vector<vector<int>> problem) {
     vector<vector<int>> goal = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
-
-}
-
-void generalSearch(vector<vector<int>> problem, int func, Tree tree) {
 
     int heuristic = 0;
 
-    if (func == 1) {
-        heuristic = uniformCostSearch();
-    } else if (func == 2) {
-        heuristic = misplaced();
-    } else if (func == 3) {
-        heuristic = manhattan();
+    for (unsigned i = 0; i < problem.size(); ++i) {
+        for (unsigned j = 0; j < problem.size(); ++j) {
+            if ((problem[i][j] != 0) && (problem[i][j] != goal[i][j])) {
+                heuristic += 1;
+            }
+        }
     }
 
-    tree.insert(heuristic);
+    return heuristic;
+}
+
+int manhattan(vector<vector<int>> problem) {
+    vector<vector<int>> goal = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
+
+    int heuristic = 0;
+
+    int problemRow = 0;
+    int problemColumn = 0;
+    int goalRow = 0;
+    int goalColumn = 0;
+
+    int rowComp = 0;
+    int columnComp = 0;
+
+    for (unsigned i = 0; i < 9; ++i) {
+        for (unsigned j = 0; j < problem.size(); ++j) {
+            for (unsigned k = 0; k < problem.size(); ++k) {
+                if (problem[j][k] == i) {
+                    problemRow = j;
+                    problemColumn = k;
+                }
+                if (goal[j][k] == i) {
+                    goalRow = j;
+                    goalColumn = k;
+                }
+            }
+        }
+        rowComp = abs(goalRow - problemRow);
+        columnComp = abs(goalColumn - problemColumn);
+        heuristic += rowComp - columnComp;
+    }
+
+    return heuristic;
+}
+
+void generalSearch(vector<vector<int>> problem, int func, Tree *tree) {
+    int heuristic = 0;
+
+    if (func == 1) {
+        heuristic = uniformCostSearch(problem);
+    } else if (func == 2) {
+        heuristic = misplaced(problem);
+    } else if (func == 3) {
+        heuristic = manhattan(problem);
+    }
+
+    Node* curr = nullptr;
+
+    tree->insert(heuristic);
 }
 
 int main() {
-
     Tree tree;
 
     int puzzleType = 0;
@@ -87,7 +130,6 @@ int main() {
         }
     }
 
-
     for (unsigned i = 0; i < size; ++i) {
         for (unsigned j = 0; j < size; ++j) {
             cout << puzzle[i][j];
@@ -108,15 +150,7 @@ int main() {
 
     cin >> algorithmChoice;
 
-    generalSearch(puzzle, algorithmChoice, tree);
-
-    if (algorithmChoice == 1) {
-        uniformCostSearch();
-    } else if (algorithmChoice == 2) {
-        misplaced();
-    } else if (algorithmChoice == 3) {
-        manhattan();
-    }
+    generalSearch(puzzle, algorithmChoice, &tree);
 
     return 0;
 }

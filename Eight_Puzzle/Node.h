@@ -14,12 +14,13 @@ class Node {
 private:
     int cost;
     int depth;
+    vector<vector<int>> puzzle;
     Node* left;
     Node* right;
     Node* parent;
 
 public:
-    Node(int cost):cost(cost), depth(depth), left(0),right(0), parent(0){}
+    Node(int cost):cost(cost), puzzle(0), depth(0), left(0),right(0), parent(0){}
 };
 
 

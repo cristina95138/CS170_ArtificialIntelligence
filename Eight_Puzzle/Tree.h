@@ -19,22 +19,22 @@ private:
     void preOrder(Node *) const;
     void inOrder(Node *) const;
     void postOrder(Node *) const;
-    void remove(Node *, Node*, string);
-    Node * search(const string &, Node *) const;
+    void remove(Node *, Node*, int);
+    Node * search(const int &, Node *) const;
     Node * min(Node *curr)const;
     Node * max(Node *curr)const;
 
 public:
     Tree();
     void insert(const int &);
-    bool search(const string &) const;
+    bool search(const int &) const;
     void inOrder() const;
     void postOrder() const;
     void preOrder() const;
-    string largest() const;
-    string smallest() const;
-    int height(const string &) const;
-    void remove(const string &);
+    int largest() const;
+    int smallest() const;
+    int height(const int &) const;
+    void remove(const int &);
 };
 
 #endif //EIGHT_PUZZLE_TREE_H
