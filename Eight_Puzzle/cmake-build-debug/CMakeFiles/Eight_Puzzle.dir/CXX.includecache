@@ -6,7 +6,21 @@
 
 #IncludeRegexTransform: 
 
-/Users/cristinalawson/Documents/GitHub/CS170/Eight_Puzzle/main.cpp
+/Users/cristinalawson/Documents/GitHub/CS170/Eight_Puzzle/Node.h
 iostream
+-
+
+/Users/cristinalawson/Documents/GitHub/CS170/Eight_Puzzle/Tree.h
+iostream
+-
+Node.h
+/Users/cristinalawson/Documents/GitHub/CS170/Eight_Puzzle/Node.h
+
+/Users/cristinalawson/Documents/GitHub/CS170/Eight_Puzzle/main.cpp
+Tree.h
+/Users/cristinalawson/Documents/GitHub/CS170/Eight_Puzzle/Tree.h
+iostream
+-
+vector
 -
 
