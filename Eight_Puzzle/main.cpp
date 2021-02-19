@@ -3,13 +3,21 @@
 
 #include <iostream>
 #include <vector>
+#include <queue>
+#include <map>
+#include <stack>
+#include <cmath>
 using namespace std;
 
 bool goal() {
     return true;
 }
 
-void expand() {}
+void expand(Node*, vector<vector<int>>) {
+    int row = 0;
+    int column = 0;
+
+}
 
 int uniformCostSearch(vector<vector<int>> problem) {
     vector<vector<int>> goal = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
@@ -36,7 +44,7 @@ int misplaced(vector<vector<int>> problem) {
 int manhattan(vector<vector<int>> problem) {
     vector<vector<int>> goal = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
 
-    int heuristic = 0;
+    int heuristic = 0; // Heuristic value
 
     int problemRow = 0;
     int problemColumn = 0;
@@ -69,6 +77,15 @@ int manhattan(vector<vector<int>> problem) {
 
 void generalSearch(vector<vector<int>> problem, int func, Tree *tree) {
     int heuristic = 0;
+    int expanded = 0;
+    int maxSize = 0;
+
+    queue<int> pQ;
+    map<Node*, Node*> pM;
+    vector<int> heap;
+    make_heap(heap.begin(), heap.end());
+    stack<int> states;
+
 
     if (func == 1) {
         heuristic = uniformCostSearch(problem);
@@ -78,19 +95,35 @@ void generalSearch(vector<vector<int>> problem, int func, Tree *tree) {
         heuristic = manhattan(problem);
     }
 
-    Node* curr = nullptr;
+    Node* startNode  = new Node(heuristic);
+    startNode->puzzle = problem;
 
-    tree->insert(heuristic);
+    while(pQ.size() > 0) {
+        maxSize = fmax(pQ.size(), maxSize);
+    }
+
+    //tree->insert(heuristic);
 }
 
 int main() {
     Tree tree;
 
-    int puzzleType = 0;
-    int algorithmChoice = 0;
-    vector<vector<int>> puzzle;
+    int puzzleType = 0; // Default or DIY
+    int algorithmChoice = 0; // UCS, Misplaced, or Manhattan
+    vector<vector<int>> puzzle; // 8 puzzle 2d vector
+    vector<int> row; // Vector rows for 2d vector initialization
     int size = 3; // 3x3 puzzle, can be changed to make a size x size puzzle
-    int diff = 0;
+    int diff = 0; // Default difficulty
+    int num = 0; // Read in DIY values
+
+    // Initializes vector so it can be filled
+    for (unsigned i = 0; i < size; ++i) {
+        for (unsigned j = 0; j < size; ++j) {
+            row.push_back(0);
+        }
+        puzzle.push_back(row);
+        row.clear();
+    }
 
     cout << "Welcome to Cristina Lawson's 8-puzzle solver." << endl;
     cout << "Type \"1\" to use a default puzzle, or \"2\" to enter your own puzzle." << endl;
@@ -125,7 +158,8 @@ int main() {
         for (unsigned i = 0; i < size; ++i) {
             cout << "Enter row " << i + 1 << ", use space or tabs between numbers" << endl;
             for (unsigned j = 0; j < size; ++j) {
-                cin >> puzzle[i][j];
+                cin >> num;
+                puzzle.at(i).at(j) = num;
             }
         }
     }
