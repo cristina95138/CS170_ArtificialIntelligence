@@ -3,4 +3,4 @@ project(Eight_Puzzle)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(Eight_Puzzle main.cpp Tree.cpp Tree.h Node.cpp Node.h)
+add_executable(Eight_Puzzle main.cpp Node.cpp Node.h)

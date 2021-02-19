@@ -1,10 +1,9 @@
-#include "Tree.h"
 #include "Node.h"
 
 #include <iostream>
 #include <vector>
 #include <queue>
-#include <map>
+#include <unordered_map>
 #include <stack>
 #include <cmath>
 using namespace std;
@@ -13,10 +12,49 @@ bool goal() {
     return true;
 }
 
-void expand(Node*, vector<vector<int>>) {
+Node* expand(Node* node, unordered_map<vector<vector<int>>, Node*> repeats) {
     int row = 0;
     int column = 0;
 
+    // Finding blank (0) in the provided puzzle
+    for (unsigned i = 0; i < node->puzzle.size(); ++i) {
+        for (unsigned j = 0; j < node->puzzle.size(); ++j) {
+            if (node->puzzle[i][j] == 0) {
+                row = i;
+                column = j;
+            }
+        }
+    }
+
+    // Depth first search of puzzle
+    // Order: left, right, up, down
+
+    // Left
+    if (column > 0) {
+        vector<vector<int>> l = node->puzzle;
+        swap(l[row][column], l[row][column - 1]);
+
+        if (!repeats.find(l)) {
+
+        }
+    }
+
+    // Right
+    if (column < (node->puzzle.size() - 1)) {
+
+    }
+
+    // Up
+    if (row > 0) {
+
+    }
+
+    // Down
+    if (row < (node->puzzle.size() - 1)) {
+
+    }
+
+    return node;
 }
 
 int uniformCostSearch(vector<vector<int>> problem) {
@@ -33,7 +71,7 @@ int misplaced(vector<vector<int>> problem) {
     for (unsigned i = 0; i < problem.size(); ++i) {
         for (unsigned j = 0; j < problem.size(); ++j) {
             if ((problem[i][j] != 0) && (problem[i][j] != goal[i][j])) {
-                heuristic += 1;
+                ++heuristic;
             }
         }
     }
@@ -76,16 +114,16 @@ int manhattan(vector<vector<int>> problem) {
 }
 
 void generalSearch(vector<vector<int>> problem, int func, Tree *tree) {
-    int heuristic = 0;
-    int expanded = 0;
-    int maxSize = 0;
+    int heuristic = 0; // Heuristic value
+    int expanded = 0; // Number of expanded nodes
+    int maxSize = 0; // Max size of queue
+    int size = 0; // Size of queue
 
-    queue<int> pQ;
-    map<Node*, Node*> pM;
+    queue<Node*> pQ; // Queue of nodes
+    unordered_map<vector<vector<int>>, Node*> pM; // Unordered map of repeats
     vector<int> heap;
     make_heap(heap.begin(), heap.end());
     stack<int> states;
-
 
     if (func == 1) {
         heuristic = uniformCostSearch(problem);
@@ -95,8 +133,16 @@ void generalSearch(vector<vector<int>> problem, int func, Tree *tree) {
         heuristic = manhattan(problem);
     }
 
+    // Create starting node
     Node* startNode  = new Node(heuristic);
     startNode->puzzle = problem;
+
+    // Add starting node to queue
+    pQ.push(startNode);
+
+    // Increase queue size and max size
+    ++maxSize;
+    ++size;
 
     while(pQ.size() > 0) {
         maxSize = fmax(pQ.size(), maxSize);
