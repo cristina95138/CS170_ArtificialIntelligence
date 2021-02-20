@@ -6,21 +6,17 @@
 
 #IncludeRegexTransform: 
 
+/Users/cristinalawson/Documents/GitHub/CS170/Eight_Puzzle/Node.cpp
+Node.h
+/Users/cristinalawson/Documents/GitHub/CS170/Eight_Puzzle/Node.h
+
 /Users/cristinalawson/Documents/GitHub/CS170/Eight_Puzzle/Node.h
 iostream
 -
 vector
 -
 
-/Users/cristinalawson/Documents/GitHub/CS170/Eight_Puzzle/Tree.h
-iostream
--
-Node.h
-/Users/cristinalawson/Documents/GitHub/CS170/Eight_Puzzle/Node.h
-
 /Users/cristinalawson/Documents/GitHub/CS170/Eight_Puzzle/main.cpp
-Tree.h
-/Users/cristinalawson/Documents/GitHub/CS170/Eight_Puzzle/Tree.h
 Node.h
 /Users/cristinalawson/Documents/GitHub/CS170/Eight_Puzzle/Node.h
 iostream
@@ -29,7 +25,7 @@ vector
 -
 queue
 -
-unordered_map
+set
 -
 stack
 -

@@ -1,1 +1,1 @@
-/usr/bin/c++  -g -Wl,-search_paths_first -Wl,-headerpad_max_install_names  CMakeFiles/Eight_Puzzle.dir/main.cpp.o CMakeFiles/Eight_Puzzle.dir/Tree.cpp.o CMakeFiles/Eight_Puzzle.dir/Node.cpp.o  -o Eight_Puzzle 
+/usr/bin/c++  -g -Wl,-search_paths_first -Wl,-headerpad_max_install_names  CMakeFiles/Eight_Puzzle.dir/main.cpp.o CMakeFiles/Eight_Puzzle.dir/Node.cpp.o  -o Eight_Puzzle 

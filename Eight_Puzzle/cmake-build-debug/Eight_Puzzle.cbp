@@ -86,12 +86,6 @@
 		<Unit filename="/Users/cristinalawson/Documents/GitHub/CS170/Eight_Puzzle/Node.h">
 			<Option target="Eight_Puzzle"/>
 		</Unit>
-		<Unit filename="/Users/cristinalawson/Documents/GitHub/CS170/Eight_Puzzle/Tree.cpp">
-			<Option target="Eight_Puzzle"/>
-		</Unit>
-		<Unit filename="/Users/cristinalawson/Documents/GitHub/CS170/Eight_Puzzle/Tree.h">
-			<Option target="Eight_Puzzle"/>
-		</Unit>
 		<Unit filename="/Users/cristinalawson/Documents/GitHub/CS170/Eight_Puzzle/main.cpp">
 			<Option target="Eight_Puzzle"/>
 		</Unit>

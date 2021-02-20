@@ -4,11 +4,6 @@
 CMakeFiles/Eight_Puzzle.dir/Node.cpp.o: ../Node.cpp
 CMakeFiles/Eight_Puzzle.dir/Node.cpp.o: ../Node.h
 
-CMakeFiles/Eight_Puzzle.dir/Tree.cpp.o: ../Node.h
-CMakeFiles/Eight_Puzzle.dir/Tree.cpp.o: ../Tree.cpp
-CMakeFiles/Eight_Puzzle.dir/Tree.cpp.o: ../Tree.h
-
 CMakeFiles/Eight_Puzzle.dir/main.cpp.o: ../Node.h
-CMakeFiles/Eight_Puzzle.dir/main.cpp.o: ../Tree.h
 CMakeFiles/Eight_Puzzle.dir/main.cpp.o: ../main.cpp
 

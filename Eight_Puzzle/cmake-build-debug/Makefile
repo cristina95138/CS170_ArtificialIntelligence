@@ -170,33 +170,6 @@ Node.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Eight_Puzzle.dir/build.make CMakeFiles/Eight_Puzzle.dir/Node.cpp.s
 .PHONY : Node.cpp.s
 
-Tree.o: Tree.cpp.o
-
-.PHONY : Tree.o
-
-# target to build an object file
-Tree.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Eight_Puzzle.dir/build.make CMakeFiles/Eight_Puzzle.dir/Tree.cpp.o
-.PHONY : Tree.cpp.o
-
-Tree.i: Tree.cpp.i
-
-.PHONY : Tree.i
-
-# target to preprocess a source file
-Tree.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Eight_Puzzle.dir/build.make CMakeFiles/Eight_Puzzle.dir/Tree.cpp.i
-.PHONY : Tree.cpp.i
-
-Tree.s: Tree.cpp.s
-
-.PHONY : Tree.s
-
-# target to generate assembly for a file
-Tree.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Eight_Puzzle.dir/build.make CMakeFiles/Eight_Puzzle.dir/Tree.cpp.s
-.PHONY : Tree.cpp.s
-
 main.o: main.cpp.o
 
 .PHONY : main.o
@@ -236,9 +209,6 @@ help:
 	@echo "... Node.o"
 	@echo "... Node.i"
 	@echo "... Node.s"
-	@echo "... Tree.o"
-	@echo "... Tree.i"
-	@echo "... Tree.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

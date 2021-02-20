@@ -11,18 +11,18 @@
 using namespace std;
 
 class Node {
-    friend class Tree;
-
-private:
-    int cost;
-    int depth;
-    Node* left;
-    Node* right;
-    Node* parent;
 
 public:
-    Node(int cost):cost(cost), puzzle(0), depth(0), left(0),right(0), parent(0){}
     vector<vector<int>> puzzle;
+    int cost;
+    int depth;
+    Node* childLeft;
+    Node* childRight;
+    Node* childUp;
+    Node* childDown;
+    bool children;
+
+    Node(vector<vector<int>> puzzle):puzzle(puzzle), cost(0), depth(0), childLeft(0), childRight(0), childUp(0), childDown(), children(false){}
 };
 
 

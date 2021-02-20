@@ -3,16 +3,12 @@
 #include <iostream>
 #include <vector>
 #include <queue>
-#include <unordered_map>
+#include <set>
 #include <stack>
 #include <cmath>
 using namespace std;
 
-bool goal() {
-    return true;
-}
-
-Node* expand(Node* node, unordered_map<vector<vector<int>>, Node*> repeats) {
+Node* expand(Node* node, set<vector<vector<int>>> repeats) {
     int row = 0;
     int column = 0;
 
@@ -34,24 +30,39 @@ Node* expand(Node* node, unordered_map<vector<vector<int>>, Node*> repeats) {
         vector<vector<int>> l = node->puzzle;
         swap(l[row][column], l[row][column - 1]);
 
-        if (!repeats.find(l)) {
-
+        if (repeats.find(l) == repeats.end()) {
+            node->childLeft = new Node(l);
         }
     }
 
     // Right
     if (column < (node->puzzle.size() - 1)) {
+        vector<vector<int>> r = node->puzzle;
+        swap(r[row][column], r[row][column + 1]);
 
+        if (repeats.find(r) == repeats.end()) {
+            node->childRight = new Node(r);
+        }
     }
 
     // Up
     if (row > 0) {
+        vector<vector<int>> u = node->puzzle;
+        swap(u[row][column], u[row - 1][column]);
 
+        if (repeats.find(u) == repeats.end()) {
+            node->childUp = new Node(u);
+        }
     }
 
     // Down
     if (row < (node->puzzle.size() - 1)) {
+        vector<vector<int>> d = node->puzzle;
+        swap(d[row][column], d[row + 1][column]);
 
+        if (repeats.find(d) == repeats.end()) {
+            node->childDown = new Node(d);
+        }
     }
 
     return node;
@@ -113,14 +124,15 @@ int manhattan(vector<vector<int>> problem) {
     return heuristic;
 }
 
-void generalSearch(vector<vector<int>> problem, int func, Tree *tree) {
+void generalSearch(vector<vector<int>> problem, int func) {
     int heuristic = 0; // Heuristic value
     int expanded = 0; // Number of expanded nodes
     int maxSize = 0; // Max size of queue
     int size = 0; // Size of queue
 
+    vector<vector<int>> goal = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
     queue<Node*> pQ; // Queue of nodes
-    unordered_map<vector<vector<int>>, Node*> pM; // Unordered map of repeats
+    set<vector<vector<int>>> pS; // Set of repeats
     vector<int> heap;
     make_heap(heap.begin(), heap.end());
     stack<int> states;
@@ -134,8 +146,8 @@ void generalSearch(vector<vector<int>> problem, int func, Tree *tree) {
     }
 
     // Create starting node
-    Node* startNode  = new Node(heuristic);
-    startNode->puzzle = problem;
+    Node* startNode  = new Node(problem);
+    startNode->cost = heuristic;
 
     // Add starting node to queue
     pQ.push(startNode);
@@ -145,15 +157,39 @@ void generalSearch(vector<vector<int>> problem, int func, Tree *tree) {
     ++size;
 
     while(pQ.size() > 0) {
-        maxSize = fmax(pQ.size(), maxSize);
-    }
+        if (func != 1) {
 
-    //tree->insert(heuristic);
+        }
+
+        Node *popNode = pQ.front();
+        pQ.pop();
+
+        if (popNode->children == false) {
+            popNode->children = true;
+            ++expanded;
+        }
+
+        --size;
+
+        if (goal == popNode->puzzle) {
+            cout << "goalllll" << endl;
+        }
+
+        if (expanded != 0) {
+            cout << "a" << endl;
+        } else{
+            cout << "b" << endl;
+        }
+
+        Node* expandFunc = expand(popNode, pS);
+
+
+
+        //maxSize = fmax(pQ.size(), maxSize);
+    }
 }
 
 int main() {
-    Tree tree;
-
     int puzzleType = 0; // Default or DIY
     int algorithmChoice = 0; // UCS, Misplaced, or Manhattan
     vector<vector<int>> puzzle; // 8 puzzle 2d vector
@@ -230,7 +266,7 @@ int main() {
 
     cin >> algorithmChoice;
 
-    generalSearch(puzzle, algorithmChoice, &tree);
+    generalSearch(puzzle, algorithmChoice);
 
     return 0;
 }
