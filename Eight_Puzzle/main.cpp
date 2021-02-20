@@ -10,10 +10,16 @@
 using namespace std;
 
 void goalStatement(int expanded, int maxSize, Node* frontNode) {
+    // Goal statement
+    // Outputs solving metrics when the puzzle reaches its goal state
+    // Outputs: amount of expanded nodes, max node in queue, depth of goal node
+
     cout << endl << "Goal!!" << endl << endl;
     cout << "To solve this problem the search algorithm expanded a total of " <<  expanded << " nodes." << endl;
     cout << "The maximum number of nodes in the queue at any one time was " << maxSize << "." << endl;
     cout << "The depth of the goal node was " << frontNode->depth << "." << endl << endl;
+
+    // Outputs the final state of the goal puzzle so the goal state
 
     cout << "Final state of the puzzle: " << endl;
 
