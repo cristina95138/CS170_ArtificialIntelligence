@@ -6,13 +6,16 @@
 #include <set>
 #include <stack>
 #include <cmath>
+#include <chrono>
 using namespace std;
 
 void goalStatement(int expanded, int maxSize, Node* frontNode) {
     cout << endl << "Goal!!" << endl << endl;
     cout << "To solve this problem the search algorithm expanded a total of " <<  expanded << " nodes." << endl;
     cout << "The maximum number of nodes in the queue at any one time was " << maxSize << "." << endl;
-    cout << "The depth of the goal node was " << frontNode->depth << "." << endl;
+    cout << "The depth of the goal node was " << frontNode->depth << "." << endl << endl;
+
+    cout << "Final state of the puzzle: " << endl;
 
     for (unsigned i = 0; i < 3; ++i) {
         for (unsigned j = 0; j < 3; ++j) {
@@ -24,9 +27,15 @@ void goalStatement(int expanded, int maxSize, Node* frontNode) {
         }
         cout << endl;
     }
+    cout << endl;
 }
 
 void stateStatement(int expanded, Node* frontNode, int pSize) {
+
+    // if expanded == 0 : Outputs the puzzle of the starting node which is the inputted unsolved puzzle
+    // else : Outputs the puzzle of the node the program is currently at as well as the node's cost to get to the
+    // node (g(n)) and the node's distance to the goal/depth of the node (h(n))
+
     if (expanded == 0) {
         cout << "Expanding state" << endl;
         for (unsigned i = 0; i < pSize; ++i) {
@@ -40,6 +49,7 @@ void stateStatement(int expanded, Node* frontNode, int pSize) {
             cout << endl;
         }
     } else {
+
         cout << "The best state to expand with a g(n) = " << frontNode->depth << " and h(n) = " << frontNode->cost << " is..." << endl;
         for (unsigned i = 0; i < pSize; ++i) {
             for (unsigned j = 0; j < pSize; ++j) {
@@ -69,10 +79,11 @@ Node* expand(Node* node, set<vector<vector<int>>> repeats) {
         }
     }
 
-    // Depth first search of puzzle
+    // Uniform cost search of puzzle
+    // Going through each possibility and making a new node until the goal is achieved
     // Order: left, right, up, down
 
-    // Left
+    // Move Left
     if (column > 0) {
         vector<vector<int>> l = node->puzzle;
         swap(l[row][column], l[row][column - 1]);
@@ -82,7 +93,7 @@ Node* expand(Node* node, set<vector<vector<int>>> repeats) {
         }
     }
 
-    // Right
+    // Move Right
     if (column < (node->puzzle.size() - 1)) {
         vector<vector<int>> r = node->puzzle;
         swap(r[row][column], r[row][column + 1]);
@@ -92,7 +103,7 @@ Node* expand(Node* node, set<vector<vector<int>>> repeats) {
         }
     }
 
-    // Up
+    // Move Up
     if (row > 0) {
         vector<vector<int>> u = node->puzzle;
         swap(u[row][column], u[row - 1][column]);
@@ -102,7 +113,7 @@ Node* expand(Node* node, set<vector<vector<int>>> repeats) {
         }
     }
 
-    // Down
+    // Move Down
     if (row < (node->puzzle.size() - 1)) {
         vector<vector<int>> d = node->puzzle;
         swap(d[row][column], d[row + 1][column]);
@@ -181,17 +192,6 @@ void generalSearch(vector<vector<int>> problem, int func, int pSize) {
     vector<vector<int>> goal = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
     queue<Node*> pQ; // Queue of nodes
     set<vector<vector<int>>> pS; // Set of repeats
-    vector<int> heap;
-    make_heap(heap.begin(), heap.end());
-    stack<int> states;
-
-    if (func == 1) {
-        heuristic = uniformCostSearchHeuristic(problem);
-    } else if (func == 2) {
-        heuristic = misplacedHeuristic(problem);
-    } else if (func == 3) {
-        heuristic = manhattanHeuristic(problem);
-    }
 
     // Create starting node
     Node* startNode  = new Node(problem);
@@ -205,6 +205,14 @@ void generalSearch(vector<vector<int>> problem, int func, int pSize) {
     ++maxSize;
     ++size;
 
+    if (func == 1) {
+        heuristic = uniformCostSearchHeuristic(problem);
+    } else if (func == 2) {
+        heuristic = misplacedHeuristic(problem);
+    } else if (func == 3) {
+        heuristic = manhattanHeuristic(problem);
+    }
+
     while(pQ.size() > 0) {
         if (func != 1) {
 
@@ -212,16 +220,16 @@ void generalSearch(vector<vector<int>> problem, int func, int pSize) {
 
         Node *frontNode = pQ.front();
         pQ.pop();
+        --size;
 
         if (frontNode->children == false) {
             frontNode->children = true;
             ++expanded;
         }
 
-        --size;
-
         if (goal == frontNode->puzzle) {
             goalStatement(expanded, maxSize, frontNode);
+            return;
         }
 
         //stateStatement(expanded, frontNode, pSize);
@@ -336,8 +344,29 @@ int main() {
 
     cin >> algorithmChoice;
 
+    // Timer for timing how long the algorithm takes to solve the puzzle
+    auto start = chrono::steady_clock::now();
+
     // Running the algorithm
     generalSearch(puzzle, algorithmChoice, pSize);
+
+    auto end = chrono::steady_clock::now();
+
+    cout << "Elapsed time in nanoseconds: "
+         << chrono::duration_cast<chrono::nanoseconds>(end - start).count()
+         << " ns" << endl;
+
+    cout << "Elapsed time in microseconds: "
+         << chrono::duration_cast<chrono::microseconds>(end - start).count()
+         << " µs" << endl;
+
+    cout << "Elapsed time in seconds: "
+         << chrono::duration_cast<chrono::seconds>(end - start).count()
+         << " secs" << endl;
+
+    cout << "Elapsed time in minutes: "
+         << chrono::duration_cast<chrono::minutes>(end - start).count()
+         << " mins" << endl;
 
     return 0;
 }
