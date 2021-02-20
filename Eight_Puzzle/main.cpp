@@ -8,6 +8,42 @@
 #include <cmath>
 using namespace std;
 
+void goalStatement(int expanded, int maxSize, Node* frontNode) {
+    cout << "Goal!!" << endl << endl;
+    cout << "To solve this problem the search algorithm expanded a total of " <<  expanded << " nodes." << endl;
+    cout << "The maximum number of nodes in the queue at any one time was " << maxSize << "." << endl;
+    cout << "The depth of the goal node was " << frontNode->depth << "." << endl;
+}
+
+void stateStatement(int expanded, Node* frontNode, int pSize) {
+    if (expanded == 0) {
+        cout << "Expanding state" << endl;
+        for (unsigned i = 0; i < pSize; ++i) {
+            for (unsigned j = 0; j < pSize; ++j) {
+                cout << frontNode->puzzle[i][j];
+
+                if (j < pSize - 1) {
+                    cout << " ";
+                }
+            }
+            cout << endl;
+        }
+    } else {
+        cout << "The best state to expand with a g(n) = " << frontNode->depth << " and h(n) = " << frontNode->cost << " is..." << endl;
+        for (unsigned i = 0; i < pSize; ++i) {
+            for (unsigned j = 0; j < pSize; ++j) {
+                cout << frontNode->puzzle[i][j];
+
+                if (j < pSize - 1) {
+                    cout << " ";
+                }
+            }
+            cout << endl;
+        }
+        cout << "Expanding node..." << endl;
+    }
+}
+
 Node* expand(Node* node, set<vector<vector<int>>> repeats) {
     int row = 0;
     int column = 0;
@@ -68,13 +104,13 @@ Node* expand(Node* node, set<vector<vector<int>>> repeats) {
     return node;
 }
 
-int uniformCostSearch(vector<vector<int>> problem) {
+int uniformCostSearchHeuristic(vector<vector<int>> problem) {
     vector<vector<int>> goal = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
 
     return 0;
 }
 
-int misplaced(vector<vector<int>> problem) {
+int misplacedHeuristic(vector<vector<int>> problem) {
     vector<vector<int>> goal = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
 
     int heuristic = 0;
@@ -90,7 +126,7 @@ int misplaced(vector<vector<int>> problem) {
     return heuristic;
 }
 
-int manhattan(vector<vector<int>> problem) {
+int manhattanHeuristic(vector<vector<int>> problem) {
     vector<vector<int>> goal = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
 
     int heuristic = 0; // Heuristic value
@@ -124,7 +160,7 @@ int manhattan(vector<vector<int>> problem) {
     return heuristic;
 }
 
-void generalSearch(vector<vector<int>> problem, int func) {
+void generalSearch(vector<vector<int>> problem, int func, int pSize) {
     int heuristic = 0; // Heuristic value
     int expanded = 0; // Number of expanded nodes
     int maxSize = 0; // Max size of queue
@@ -138,19 +174,20 @@ void generalSearch(vector<vector<int>> problem, int func) {
     stack<int> states;
 
     if (func == 1) {
-        heuristic = uniformCostSearch(problem);
+        heuristic = uniformCostSearchHeuristic(problem);
     } else if (func == 2) {
-        heuristic = misplaced(problem);
+        heuristic = misplacedHeuristic(problem);
     } else if (func == 3) {
-        heuristic = manhattan(problem);
+        heuristic = manhattanHeuristic(problem);
     }
 
     // Create starting node
     Node* startNode  = new Node(problem);
     startNode->cost = heuristic;
 
-    // Add starting node to queue
+    // Add starting node to queue and set
     pQ.push(startNode);
+    pS.insert(startNode->puzzle);
 
     // Increase queue size and max size
     ++maxSize;
@@ -161,31 +198,48 @@ void generalSearch(vector<vector<int>> problem, int func) {
 
         }
 
-        Node *popNode = pQ.front();
+        Node *frontNode = pQ.front();
         pQ.pop();
 
-        if (popNode->children == false) {
-            popNode->children = true;
+        if (frontNode->children == false) {
+            frontNode->children = true;
             ++expanded;
         }
 
         --size;
 
-        if (goal == popNode->puzzle) {
-            cout << "goalllll" << endl;
+        if (goal == frontNode->puzzle) {
+            goalStatement(expanded, maxSize, frontNode);
         }
 
-        if (expanded != 0) {
-            cout << "a" << endl;
-        } else{
-            cout << "b" << endl;
+        stateStatement(expanded, frontNode, pSize);
+
+        Node* expandFunc = expand(frontNode, pS);
+        Node* child[] = {expandFunc->childLeft, expandFunc->childRight, expandFunc->childUp, expandFunc->childDown};
+
+        for (unsigned i = 0; i < 4; ++i) {
+            if (child[i] != nullptr) {
+                if (func == 1) {
+                    child[i]->cost = 0;
+                    child[i]->depth = ++frontNode->depth;
+                } else if (func == 2) {
+                    child[i]->cost = misplacedHeuristic(child[i]->puzzle);
+                    child[i]->depth = ++frontNode->depth;
+                } else if (func == 3) {
+                    child[i]->cost = manhattanHeuristic(child[i]->puzzle);
+                    child[i]->depth = ++frontNode->depth;
+                }
+                pQ.push(child[i]);
+                pS.insert(child[i]->puzzle);
+                ++size;
+            }
         }
-
-        Node* expandFunc = expand(popNode, pS);
-
-
 
         //maxSize = fmax(pQ.size(), maxSize);
+    }
+
+    if (size > maxSize) {
+        maxSize = size;
     }
 }
 
@@ -194,19 +248,20 @@ int main() {
     int algorithmChoice = 0; // UCS, Misplaced, or Manhattan
     vector<vector<int>> puzzle; // 8 puzzle 2d vector
     vector<int> row; // Vector rows for 2d vector initialization
-    int size = 3; // 3x3 puzzle, can be changed to make a size x size puzzle
+    int pSize = 3; // 3x3 puzzle, can be changed to make a size x size puzzle
     int diff = 0; // Default difficulty
     int num = 0; // Read in DIY values
 
     // Initializes vector so it can be filled
-    for (unsigned i = 0; i < size; ++i) {
-        for (unsigned j = 0; j < size; ++j) {
+    for (unsigned i = 0; i < pSize; ++i) {
+        for (unsigned j = 0; j < pSize; ++j) {
             row.push_back(0);
         }
         puzzle.push_back(row);
         row.clear();
     }
 
+    // Start of puzzle solver
     cout << "Welcome to Cristina Lawson's 8-puzzle solver." << endl;
     cout << "Type \"1\" to use a default puzzle, or \"2\" to enter your own puzzle." << endl;
     cin >>  puzzleType;
@@ -237,20 +292,21 @@ int main() {
 
         cout << "Enter your puzzle, use a zero to represent the blank" << endl;
 
-        for (unsigned i = 0; i < size; ++i) {
+        for (unsigned i = 0; i < pSize; ++i) {
             cout << "Enter row " << i + 1 << ", use space or tabs between numbers" << endl;
-            for (unsigned j = 0; j < size; ++j) {
+            for (unsigned j = 0; j < pSize; ++j) {
                 cin >> num;
                 puzzle.at(i).at(j) = num;
             }
         }
     }
 
-    for (unsigned i = 0; i < size; ++i) {
-        for (unsigned j = 0; j < size; ++j) {
+    // Outputs puzzle to be solved to console
+    for (unsigned i = 0; i < pSize; ++i) {
+        for (unsigned j = 0; j < pSize; ++j) {
             cout << puzzle[i][j];
 
-            if (j < size - 1) {
+            if (j < pSize - 1) {
                 cout << " ";
             }
         }
@@ -266,7 +322,8 @@ int main() {
 
     cin >> algorithmChoice;
 
-    generalSearch(puzzle, algorithmChoice);
+    // Running the algorithm
+    generalSearch(puzzle, algorithmChoice, pSize);
 
     return 0;
 }
