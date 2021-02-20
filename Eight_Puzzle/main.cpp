@@ -13,6 +13,17 @@ void goalStatement(int expanded, int maxSize, Node* frontNode) {
     cout << "To solve this problem the search algorithm expanded a total of " <<  expanded << " nodes." << endl;
     cout << "The maximum number of nodes in the queue at any one time was " << maxSize << "." << endl;
     cout << "The depth of the goal node was " << frontNode->depth << "." << endl;
+
+    for (unsigned i = 0; i < 3; ++i) {
+        for (unsigned j = 0; j < 3; ++j) {
+            cout << frontNode->puzzle[i][j];
+
+            if (j < 3 - 1) {
+                cout << " ";
+            }
+        }
+        cout << endl;
+    }
 }
 
 void stateStatement(int expanded, Node* frontNode, int pSize) {
@@ -40,7 +51,7 @@ void stateStatement(int expanded, Node* frontNode, int pSize) {
             }
             cout << endl;
         }
-        cout << "Expanding node..." << endl;
+        cout << "Expanding node..." << endl << endl;
     }
 }
 
@@ -139,7 +150,7 @@ int manhattanHeuristic(vector<vector<int>> problem) {
     int rowComp = 0;
     int columnComp = 0;
 
-    for (unsigned i = 0; i < 9; ++i) {
+    for (unsigned i = 0; i < 8; ++i) {
         for (unsigned j = 0; j < problem.size(); ++j) {
             for (unsigned k = 0; k < problem.size(); ++k) {
                 if (problem[j][k] == i) {
@@ -154,6 +165,7 @@ int manhattanHeuristic(vector<vector<int>> problem) {
         }
         rowComp = abs(goalRow - problemRow);
         columnComp = abs(goalColumn - problemColumn);
+
         heuristic += rowComp - columnComp;
     }
 
@@ -212,7 +224,7 @@ void generalSearch(vector<vector<int>> problem, int func, int pSize) {
             goalStatement(expanded, maxSize, frontNode);
         }
 
-        stateStatement(expanded, frontNode, pSize);
+        //stateStatement(expanded, frontNode, pSize);
 
         Node* expandFunc = expand(frontNode, pS);
         Node* child[] = {expandFunc->childLeft, expandFunc->childRight, expandFunc->childUp, expandFunc->childDown};
@@ -235,11 +247,7 @@ void generalSearch(vector<vector<int>> problem, int func, int pSize) {
             }
         }
 
-        //maxSize = fmax(pQ.size(), maxSize);
-    }
-
-    if (size > maxSize) {
-        maxSize = size;
+        maxSize = fmax(pQ.size(), maxSize);
     }
 }
 
