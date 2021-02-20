@@ -4,10 +4,8 @@
 #include <vector>
 #include <queue>
 #include <set>
-#include <stack>
 #include <cmath>
 #include <chrono>
-#include <ctime>
 using namespace std;
 
 void goalStatement(int expanded, int maxSize, Node* frontNode, int pSize) {
