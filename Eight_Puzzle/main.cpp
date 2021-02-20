@@ -9,7 +9,7 @@
 using namespace std;
 
 void goalStatement(int expanded, int maxSize, Node* frontNode) {
-    cout << "Goal!!" << endl << endl;
+    cout << endl << "Goal!!" << endl << endl;
     cout << "To solve this problem the search algorithm expanded a total of " <<  expanded << " nodes." << endl;
     cout << "The maximum number of nodes in the queue at any one time was " << maxSize << "." << endl;
     cout << "The depth of the goal node was " << frontNode->depth << "." << endl;
@@ -249,6 +249,12 @@ void generalSearch(vector<vector<int>> problem, int func, int pSize) {
 
         maxSize = fmax(pQ.size(), maxSize);
     }
+
+    if (pQ.size() == 0) {
+        cout << "Fail" << endl;
+    }
+
+    return;
 }
 
 int main() {
