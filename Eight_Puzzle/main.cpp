@@ -137,6 +137,7 @@ int uniformCostSearchHeuristic(vector<vector<int>> problem) {
 }
 
 // Misplaced Heuristic Calculation
+// Misplaced heuristic is just the amount pieces in the puzzle that aren't in the same place as the pieces in the goal puzzle
 int misplacedHeuristic(vector<vector<int>> problem) {
     vector<vector<int>> goal = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
 
@@ -154,6 +155,8 @@ int misplacedHeuristic(vector<vector<int>> problem) {
 }
 
 // Manhattan Heuristic Calculation
+// Manhattan Distance Formula: m = abs(x2-x1) + abs(y2-y1)
+// Manhattan heuristic is the manhattan distance of the goal pieces from the actual placement of the pieces
 int manhattanHeuristic(vector<vector<int>> problem) {
     vector<vector<int>> goal = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
     int heuristic = 0; // Heuristic value
