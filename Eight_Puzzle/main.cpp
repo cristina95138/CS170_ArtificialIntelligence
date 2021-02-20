@@ -9,25 +9,22 @@
 #include <chrono>
 using namespace std;
 
-void goalStatement(int expanded, int maxSize, Node* frontNode) {
+void goalStatement(int expanded, int maxSize, Node* frontNode, int pSize) {
     // Goal statement
     // Outputs solving metrics when the puzzle reaches its goal state
     // Outputs: amount of expanded nodes, max node in queue, depth of goal node
-
     cout << endl << "Goal!!" << endl << endl;
     cout << "To solve this problem the search algorithm expanded a total of " <<  expanded << " nodes." << endl;
     cout << "The maximum number of nodes in the queue at any one time was " << maxSize << "." << endl;
     cout << "The depth of the goal node was " << frontNode->depth << "." << endl << endl;
 
     // Outputs the final state of the goal puzzle so the goal state
-
     cout << "Final state of the puzzle: " << endl;
-
-    for (unsigned i = 0; i < 3; ++i) {
-        for (unsigned j = 0; j < 3; ++j) {
+    for (unsigned i = 0; i < pSize; ++i) {
+        for (unsigned j = 0; j < pSize; ++j) {
             cout << frontNode->puzzle[i][j];
 
-            if (j < 3 - 1) {
+            if (j < pSize - 1) {
                 cout << " ";
             }
         }
@@ -55,7 +52,6 @@ void stateStatement(int expanded, Node* frontNode, int pSize) {
             cout << endl;
         }
     } else {
-
         cout << "The best state to expand with a g(n) = " << frontNode->depth << " and h(n) = " << frontNode->cost << " is..." << endl;
         for (unsigned i = 0; i < pSize; ++i) {
             for (unsigned j = 0; j < pSize; ++j) {
@@ -132,12 +128,14 @@ Node* expand(Node* node, set<vector<vector<int>>> repeats) {
     return node;
 }
 
+// Uniform Cost Search has a heuristic of 0 so just 0 is returned
 int uniformCostSearchHeuristic(vector<vector<int>> problem) {
     vector<vector<int>> goal = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
 
     return 0;
 }
 
+// Misplaced Heuristic Calculation
 int misplacedHeuristic(vector<vector<int>> problem) {
     vector<vector<int>> goal = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
 
@@ -154,16 +152,14 @@ int misplacedHeuristic(vector<vector<int>> problem) {
     return heuristic;
 }
 
+// Manhattan Heuristic Calculation
 int manhattanHeuristic(vector<vector<int>> problem) {
     vector<vector<int>> goal = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
-
     int heuristic = 0; // Heuristic value
-
     int problemRow = 0;
     int problemColumn = 0;
     int goalRow = 0;
     int goalColumn = 0;
-
     int rowComp = 0;
     int columnComp = 0;
 
@@ -189,6 +185,7 @@ int manhattanHeuristic(vector<vector<int>> problem) {
     return heuristic;
 }
 
+// General search algorithm used to implement algorithms with calculated heuristics
 void generalSearch(vector<vector<int>> problem, int func, int pSize) {
     int heuristic = 0; // Heuristic value
     int expanded = 0; // Number of expanded nodes
@@ -211,6 +208,8 @@ void generalSearch(vector<vector<int>> problem, int func, int pSize) {
     ++maxSize;
     ++size;
 
+    // Based on the heuristic chosen by the user, the problem puzzle will be run through one of the algorithms and
+    // the heuristic value of the starting node will be determined
     if (func == 1) {
         heuristic = uniformCostSearchHeuristic(problem);
     } else if (func == 2) {
@@ -219,7 +218,9 @@ void generalSearch(vector<vector<int>> problem, int func, int pSize) {
         heuristic = manhattanHeuristic(problem);
     }
 
+    // While the queue isn't empty the puzzle will be expanded until the goal state is achieved
     while(pQ.size() > 0) {
+
         if (func != 1) {
 
         }
@@ -233,11 +234,13 @@ void generalSearch(vector<vector<int>> problem, int func, int pSize) {
             ++expanded;
         }
 
+        // If goal is achieved print goal statement and exit general search function
         if (goal == frontNode->puzzle) {
-            goalStatement(expanded, maxSize, frontNode);
+            goalStatement(expanded, maxSize, frontNode, pSize);
             return;
         }
 
+        // Print current node with its g(n) and h(n)
         //stateStatement(expanded, frontNode, pSize);
 
         Node* expandFunc = expand(frontNode, pS);
@@ -260,12 +263,7 @@ void generalSearch(vector<vector<int>> problem, int func, int pSize) {
                 ++size;
             }
         }
-
         maxSize = fmax(pQ.size(), maxSize);
-    }
-
-    if (pQ.size() == 0) {
-        cout << "Fail" << endl;
     }
 
     return;
