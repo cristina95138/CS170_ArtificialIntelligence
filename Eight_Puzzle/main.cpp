@@ -72,7 +72,7 @@ Node* expand(Node* node, set<vector<vector<int>>> repeats) {
     int row = 0;
     int column = 0;
 
-    // Finding blank (0) in the provided puzzle
+    // Finding coordinates of blank (0) in the provided puzzle
     for (unsigned i = 0; i < node->puzzle.size(); ++i) {
         for (unsigned j = 0; j < node->puzzle.size(); ++j) {
             if (node->puzzle[i][j] == 0) {
@@ -82,7 +82,7 @@ Node* expand(Node* node, set<vector<vector<int>>> repeats) {
         }
     }
 
-    // Uniform cost search of puzzle using BFS-like algorithm
+    // Uniform cost search of puzzle using a BFS-like algorithm
     // Going through each possibility and making a new node until the goal is achieved
     // Order: left, right, up, down
 
@@ -186,6 +186,7 @@ int manhattanHeuristic(vector<vector<int>> problem) {
     return heuristic;
 }
 
+
 // General search algorithm used to implement algorithms with calculated heuristics
 void generalSearch(vector<vector<int>> problem, int func, int pSize) {
     int heuristic = 0; // Heuristic value
@@ -221,10 +222,6 @@ void generalSearch(vector<vector<int>> problem, int func, int pSize) {
 
     // While the queue isn't empty the puzzle will be expanded until the goal state is achieved
     while(pQ.size() > 0) {
-
-        if (func != 1) {
-
-        }
 
         Node *frontNode = pQ.front();
         pQ.pop();
@@ -265,6 +262,10 @@ void generalSearch(vector<vector<int>> problem, int func, int pSize) {
             }
         }
         maxSize = fmax(pQ.size(), maxSize);
+    }
+
+    if (pQ.size() == 0) {
+        cout << endl << "Failure!" << endl << endl;
     }
 
     return;
