@@ -349,7 +349,7 @@ int main() {
     cout << "Enter your choice of algorithm" << endl
          << "  1. Uniform Cost Search" << endl
          << "  2. A* with the Misplaced Tile heuristic" << endl
-         << "  3. A* with the Manhattan distance heuristic." << endl;
+         << "  3. A* with the Manhattan distance heuristic" << endl;
 
     cin >> algorithmChoice;
 
