@@ -7,6 +7,7 @@
 #include <stack>
 #include <cmath>
 #include <chrono>
+#include <ctime>
 using namespace std;
 
 void goalStatement(int expanded, int maxSize, Node* frontNode, int pSize) {
@@ -81,7 +82,7 @@ Node* expand(Node* node, set<vector<vector<int>>> repeats) {
         }
     }
 
-    // Uniform cost search of puzzle
+    // Uniform cost search of puzzle using BFS-like algorithm
     // Going through each possibility and making a new node until the goal is achieved
     // Order: left, right, up, down
 
