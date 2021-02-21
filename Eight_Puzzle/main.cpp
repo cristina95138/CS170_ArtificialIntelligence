@@ -269,7 +269,7 @@ void generalSearch(vector<vector<int>> problem, int func, int pSize) {
     pQ.push(startNode);
     pS.insert(startNode->puzzle);
 
-    // Increase queue size and max size
+    // Increase queue size and queue max size
     ++maxSize;
     ++size;
 
@@ -295,6 +295,7 @@ void generalSearch(vector<vector<int>> problem, int func, int pSize) {
         // If goal is achieved print goal statement and exit general search function
         if (goal == frontNode->puzzle) {
             goalStatement(expanded, maxSize, frontNode, pSize);
+            // To exit function once finished so that the program will end
             return;
         }
 
@@ -336,6 +337,7 @@ void generalSearch(vector<vector<int>> problem, int func, int pSize) {
         maxSize = fmax(pQ.size(), maxSize);
     }
 
+    // If the queue size is equal to 0 then the algorithm has failed
     if (pQ.size() == 0) {
         cout << endl << "Failure!" << endl << endl;
     }
