@@ -102,6 +102,7 @@ void stateStatement(int expanded, Node* frontNode, int pSize) {
             }
             cout << endl;
         }
+        cout << endl;
     } else {
         cout << "The best state to expand with a g(n) = " << frontNode->depth << " and h(n) = " << frontNode->cost << " is..." << endl;
         for (unsigned i = 0; i < pSize; ++i) {
@@ -387,6 +388,7 @@ int main() {
                 puzzle.at(i).at(j) = num;
             }
         }
+        cout << "Your puzzle:" << endl;
     }
 
     // Outputs puzzle to be solved to console
