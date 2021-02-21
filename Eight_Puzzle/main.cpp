@@ -321,11 +321,18 @@ void generalSearch(vector<vector<int>> problem, int func, int pSize) {
                     child[i]->cost = manhattanHeuristic(child[i]->puzzle);
                     child[i]->depth = frontNode->depth + 1;
                 }
+                // Push child to queue of nodes
                 pQ.push(child[i]);
+
+                // Insert child puzzle into set of already expanded nodes
                 pS.insert(child[i]->puzzle);
+
+                // Increase size of queue
                 ++size;
             }
         }
+
+        // Increase max size if the queue size has surpassed the maxSize variable value
         maxSize = fmax(pQ.size(), maxSize);
     }
 
