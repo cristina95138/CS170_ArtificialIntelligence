@@ -16,9 +16,9 @@ using namespace std;
 int minIndex(queue<Node*> &q, int sortedIndex) {
     int minIndex = -1;
     int minVal = INT_MAX;
-    int n = q.size();
+    int size = q.size();
 
-    for (unsigned i = 0; i < n; ++i) {
+    for (unsigned i = 0; i < size; ++i) {
         Node* curr = q.front();
         int num = curr->depth + curr->cost;
         q.pop();
@@ -35,9 +35,9 @@ int minIndex(queue<Node*> &q, int sortedIndex) {
 // Inserts the minimum node to the end of the queue
 void insert(queue<Node*> &q, int min_index) {
     Node* minVal;
-    int n = q.size();
+    int size = q.size();
 
-    for (unsigned i = 0; i < n; ++i) {
+    for (unsigned i = 0; i < size; ++i) {
         Node* curr = q.front();
         int num = curr->depth + curr->cost;
 
