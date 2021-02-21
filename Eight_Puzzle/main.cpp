@@ -193,7 +193,7 @@ int manhattanHeuristic(vector<vector<int>> problem) {
 // General search algorithm used to implement algorithms with calculated heuristics
 void generalSearch(vector<vector<int>> problem, int func, int pSize) {
     int heuristic = 0; // Heuristic value
-    int expanded = 0; // Number of expanded nodes
+    int expanded = -1; // Number of expanded nodes
     int maxSize = 0; // Max size of queue
     int size = 0; // Size of queue
 
