@@ -361,19 +361,19 @@ int main() {
 
     auto end = chrono::steady_clock::now();
 
-    cout << "Elapsed time in nanoseconds: "
+    cout << "CPU time in nanoseconds: "
          << chrono::duration_cast<chrono::nanoseconds>(end - start).count()
          << " ns" << endl;
 
-    cout << "Elapsed time in microseconds: "
+    cout << "CPU time in microseconds: "
          << chrono::duration_cast<chrono::microseconds>(end - start).count()
          << " µs" << endl;
 
-    cout << "Elapsed time in seconds: "
+    cout << "CPU time in seconds: "
          << chrono::duration_cast<chrono::seconds>(end - start).count()
          << " secs" << endl;
 
-    cout << "Elapsed time in minutes: "
+    cout << "CPU time in minutes: "
          << chrono::duration_cast<chrono::minutes>(end - start).count()
          << " mins" << endl;
 
