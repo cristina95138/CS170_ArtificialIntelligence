@@ -343,6 +343,7 @@ void generalSearch(vector<vector<int>> problem, int func, int pSize) {
     return;
 }
 
+// Referenced example code given for outputs
 int main() {
     int puzzleType = 0; // Default or DIY
     int algorithmChoice = 0; // UCS, Misplaced, or Manhattan
