@@ -33,17 +33,16 @@ int minIndex(queue<Node*> &q, int sortedIndex) {
 }
 
 // Inserts the minimum node to the end of the queue
-void insert(queue<Node*> &q, int min_index) {
+void insert(queue<Node*> &q, int minIndex) {
     Node* minVal;
     int size = q.size();
 
     for (unsigned i = 0; i < size; ++i) {
         Node* curr = q.front();
-        int num = curr->depth + curr->cost;
 
         q.pop();
 
-        if (i != min_index) {
+        if (i != minIndex) {
             q.push(curr);
         } else {
             minVal = curr;
