@@ -10,6 +10,7 @@
 #include <chrono>
 using namespace std;
 
+// Referenced this code for the below algorithm. Changed how the queue will be sorted.
 // https://www.geeksforgeeks.org/sorting-queue-without-extra-space/
 // Finds the index of the minimum node
 int minIndex(queue<Node*> &q, int sortedIndex) {
@@ -35,6 +36,7 @@ int minIndex(queue<Node*> &q, int sortedIndex) {
 void insert(queue<Node*> &q, int min_index) {
     Node* minVal;
     int n = q.size();
+
     for (unsigned i = 0; i < n; ++i) {
         Node* curr = q.front();
         int num = curr->depth + curr->cost;
