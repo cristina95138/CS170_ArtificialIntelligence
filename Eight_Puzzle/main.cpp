@@ -10,13 +10,11 @@
 #include <chrono>
 using namespace std;
 
-int minIndex(queue<Node*> &q, int sortedIndex)
-{
+int minIndex(queue<Node*> &q, int sortedIndex) {
     int min_index = -1;
     int min_val = INT_MAX;
     int n = q.size();
-    for (int i=0; i<n; i++)
-    {
+    for (unsigned i = 0; i < n; ++i) {
         Node* curr = q.front();
         int num = curr->depth + curr->cost;
         q.pop();  // This is dequeue() in C++ STL
@@ -25,41 +23,35 @@ int minIndex(queue<Node*> &q, int sortedIndex)
         // because we don't want to traverse
         // on the sorted part of the queue,
         // which is the right part.
-        if (num <= min_val && i <= sortedIndex)
-        {
+        if (num <= min_val && i <= sortedIndex) {
             min_index = i;
             min_val = num;
         }
-        q.push(curr);  // This is enqueue() in
-        // C++ STL
+        q.push(curr);
     }
     return min_index;
 }
 
 // Moves given minimum element to rear of
 // queue
-void insertMinToRear(queue<Node*> &q, int min_index)
-{
+void insertMinToRear(queue<Node*> &q, int min_index) {
     Node* min_val;
     int n = q.size();
-    for (int i = 0; i < n; i++)
-    {
+    for (unsigned i = 0; i < n; ++i) {
         Node* curr = q.front();
         int num = curr->depth + curr->cost;
         q.pop();
-        if (i != min_index)
+        if (i != min_index) {
             q.push(curr);
-        else
+        } else {
             min_val = curr;
-
+        }
     }
     q.push(min_val);
 }
 
-void sortQueue(queue<Node*> &q)
-{
-    for (int i = 1; i <= q.size(); i++)
-    {
+void sortQueue(queue<Node*> &q) {
+    for (unsigned i = 1; i <= q.size(); ++i) {
         int min_index = minIndex(q, q.size() - i);
         insertMinToRear(q, min_index);
     }
@@ -281,6 +273,7 @@ void generalSearch(vector<vector<int>> problem, int func, int pSize) {
     // While the queue isn't empty the puzzle will be expanded until the goal state is achieved
     while(pQ.size() > 0) {
 
+        // Sort queue for faster run times
         if (func == 2 || func == 3) {
             sortQueue(pQ);
         }
@@ -290,6 +283,7 @@ void generalSearch(vector<vector<int>> problem, int func, int pSize) {
         pQ.pop();
         --size;
 
+        // Change that node has children from false to true also increase the total number of expanded nodes
         if (frontNode->children == false) {
             frontNode->children = true;
             ++expanded;
