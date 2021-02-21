@@ -10,50 +10,50 @@
 #include <chrono>
 using namespace std;
 
+// Finds the index of the minimum node
 int minIndex(queue<Node*> &q, int sortedIndex) {
-    int min_index = -1;
-    int min_val = INT_MAX;
+    int minIndex = -1;
+    int minVal = INT_MAX;
     int n = q.size();
-    for (unsigned i = 0; i < n; ++i) {
-        Node* curr = q.front();
-        int num = curr->depth + curr->cost;
-        q.pop();  // This is dequeue() in C++ STL
 
-        // we add the condition i <= sortedIndex
-        // because we don't want to traverse
-        // on the sorted part of the queue,
-        // which is the right part.
-        if (num <= min_val && i <= sortedIndex) {
-            min_index = i;
-            min_val = num;
-        }
-        q.push(curr);
-    }
-    return min_index;
-}
-
-// Moves given minimum element to rear of
-// queue
-void insertMinToRear(queue<Node*> &q, int min_index) {
-    Node* min_val;
-    int n = q.size();
     for (unsigned i = 0; i < n; ++i) {
         Node* curr = q.front();
         int num = curr->depth + curr->cost;
         q.pop();
+
+        if (num <= minVal && i <= sortedIndex) {
+            minIndex = i;
+            minVal = num;
+        }
+        q.push(curr);
+    }
+    return minIndex;
+}
+
+// Inserts the minimum node to the end of the queue
+void insert(queue<Node*> &q, int min_index) {
+    Node* minVal;
+    int n = q.size();
+    for (unsigned i = 0; i < n; ++i) {
+        Node* curr = q.front();
+        int num = curr->depth + curr->cost;
+
+        q.pop();
+
         if (i != min_index) {
             q.push(curr);
         } else {
-            min_val = curr;
+            minVal = curr;
         }
     }
-    q.push(min_val);
+    q.push(minVal);
 }
 
+// Sorts queue
 void sortQueue(queue<Node*> &q) {
     for (unsigned i = 1; i <= q.size(); ++i) {
-        int min_index = minIndex(q, q.size() - i);
-        insertMinToRear(q, min_index);
+        int min = minIndex(q, q.size() - i);
+        insert(q, min);
     }
 }
 
