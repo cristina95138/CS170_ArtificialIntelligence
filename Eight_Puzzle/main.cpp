@@ -10,7 +10,7 @@
 #include <chrono>
 using namespace std;
 
-// Referenced this code for the below algorithm. Changed how the queue will be sorted.
+// Referenced this code for the below sortQueue algorithm. Changed how the queue will be sorted.
 // https://www.geeksforgeeks.org/sorting-queue-without-extra-space/
 // Finds the index of the minimum node
 int minIndex(queue<Node*> &q, int sortedIndex) {
