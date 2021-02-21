@@ -135,7 +135,7 @@ int uniformCostSearchHeuristic(vector<vector<int>> problem) {
 }
 
 // Misplaced Heuristic Calculation
-// Misplaced heuristic is just the amount pieces in the puzzle that aren't in the same place as the pieces in the goal puzzle
+// Misplaced heuristic is just the amount of pieces in the puzzle that aren't in the same place as the pieces in the goal puzzle
 int misplacedHeuristic(vector<vector<int>> problem) {
     vector<vector<int>> goal = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
 
@@ -223,8 +223,6 @@ void generalSearch(vector<vector<int>> problem, int func, int pSize) {
 
     // While the queue isn't empty the puzzle will be expanded until the goal state is achieved
     while(pQ.size() > 0) {
-
-        //sort
 
         Node *frontNode = pQ.front();
         pQ.pop();
