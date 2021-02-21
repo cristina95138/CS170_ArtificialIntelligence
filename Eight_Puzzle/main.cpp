@@ -227,10 +227,10 @@ int manhattanHeuristic(vector<vector<int>> problem) {
                 }
             }
         }
-        rowComp = goalRow - problemRow;
-        columnComp = goalColumn - problemColumn;
+        rowComp = abs(goalRow - problemRow);
+        columnComp = abs(goalColumn - problemColumn);
 
-        heuristic += abs(rowComp - columnComp);
+        heuristic += (rowComp + columnComp);
     }
 
     return heuristic;
