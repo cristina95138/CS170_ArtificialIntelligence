@@ -12,7 +12,7 @@ void goalStatement(int expanded, int maxSize, Node* frontNode, int pSize) {
     // Goal statement
     // Outputs solving metrics when the puzzle reaches its goal state
     // Outputs: amount of expanded nodes, max node in queue, depth of goal node
-    cout << endl << "Goal!!" << endl << endl;
+    cout << "Goal!!" << endl << endl;
     cout << "To solve this problem the search algorithm expanded a total of " <<  expanded << " nodes." << endl;
     cout << "The maximum number of nodes in the queue at any one time was " << maxSize << "." << endl;
     cout << "The depth of the goal node was " << frontNode->depth << "." << endl << endl;
@@ -35,8 +35,8 @@ void goalStatement(int expanded, int maxSize, Node* frontNode, int pSize) {
 void stateStatement(int expanded, Node* frontNode, int pSize) {
 
     /* if expanded == 0 : Outputs the puzzle of the starting node which is the inputted unsolved puzzle
-       else : Outputs the puzzle of the node the program is currently at as well as the node's cost to get to the
-              node (g(n)) and the node's distance to the goal/depth of the node (h(n)) */
+       else : Outputs the puzzle of the node the program is currently at as well as the node's distance to
+              the goal/depth of the node (g(n)) and the node's cost to get to the node (h(n)) */
 
     if (expanded == 0) {
         cout << "Expanding state" << endl;
@@ -181,7 +181,7 @@ int manhattanHeuristic(vector<vector<int>> problem) {
         rowComp = abs(goalRow - problemRow);
         columnComp = abs(goalColumn - problemColumn);
 
-        heuristic += rowComp - columnComp;
+        heuristic += abs(rowComp - columnComp);
     }
 
     return heuristic;
@@ -224,6 +224,8 @@ void generalSearch(vector<vector<int>> problem, int func, int pSize) {
     // While the queue isn't empty the puzzle will be expanded until the goal state is achieved
     while(pQ.size() > 0) {
 
+        //sort
+
         Node *frontNode = pQ.front();
         pQ.pop();
         --size;
@@ -240,7 +242,7 @@ void generalSearch(vector<vector<int>> problem, int func, int pSize) {
         }
 
         // Print current node with its g(n) and h(n)
-        //stateStatement(expanded, frontNode, pSize);
+        stateStatement(expanded, frontNode, pSize);
 
         Node* expandFunc = expand(frontNode, pS);
         Node* child[] = {expandFunc->childLeft, expandFunc->childRight, expandFunc->childUp, expandFunc->childDown};
@@ -249,13 +251,13 @@ void generalSearch(vector<vector<int>> problem, int func, int pSize) {
             if (child[i] != nullptr) {
                 if (func == 1) {
                     child[i]->cost = 0;
-                    child[i]->depth = ++frontNode->depth;
+                    child[i]->depth = frontNode->depth + 1;
                 } else if (func == 2) {
                     child[i]->cost = misplacedHeuristic(child[i]->puzzle);
-                    child[i]->depth = ++frontNode->depth;
+                    child[i]->depth = frontNode->depth + 1;
                 } else if (func == 3) {
                     child[i]->cost = manhattanHeuristic(child[i]->puzzle);
-                    child[i]->depth = ++frontNode->depth;
+                    child[i]->depth = frontNode->depth + 1;
                 }
                 pQ.push(child[i]);
                 pS.insert(child[i]->puzzle);
