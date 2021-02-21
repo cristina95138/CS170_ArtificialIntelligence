@@ -410,6 +410,8 @@ int main() {
 
     cin >> algorithmChoice;
 
+    cout << endl;
+
     // Timer for timing how long the algorithm takes to solve the puzzle
     auto start = chrono::steady_clock::now();
 
