@@ -39,7 +39,6 @@ void insert(queue<Node*> &q, int minIndex) {
 
     for (unsigned i = 0; i < size; ++i) {
         Node* curr = q.front();
-
         q.pop();
 
         if (i != minIndex) {
