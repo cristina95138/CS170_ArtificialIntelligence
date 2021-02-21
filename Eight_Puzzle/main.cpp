@@ -10,6 +10,61 @@
 #include <chrono>
 using namespace std;
 
+int minIndex(queue<Node*> &q, int sortedIndex)
+{
+    int min_index = -1;
+    int min_val = INT_MAX;
+    int n = q.size();
+    for (int i=0; i<n; i++)
+    {
+        Node* curr = q.front();
+        int num = curr->depth + curr->cost;
+        q.pop();  // This is dequeue() in C++ STL
+
+        // we add the condition i <= sortedIndex
+        // because we don't want to traverse
+        // on the sorted part of the queue,
+        // which is the right part.
+        if (num <= min_val && i <= sortedIndex)
+        {
+            min_index = i;
+            min_val = num;
+        }
+        q.push(curr);  // This is enqueue() in
+        // C++ STL
+    }
+    return min_index;
+}
+
+// Moves given minimum element to rear of
+// queue
+void insertMinToRear(queue<Node*> &q, int min_index)
+{
+    Node* min_val;
+    int n = q.size();
+    for (int i = 0; i < n; i++)
+    {
+        Node* curr = q.front();
+        int num = curr->depth + curr->cost;
+        q.pop();
+        if (i != min_index)
+            q.push(curr);
+        else
+            min_val = curr;
+
+    }
+    q.push(min_val);
+}
+
+void sortQueue(queue<Node*> &q)
+{
+    for (int i = 1; i <= q.size(); i++)
+    {
+        int min_index = minIndex(q, q.size() - i);
+        insertMinToRear(q, min_index);
+    }
+}
+
 void goalStatement(int expanded, int maxSize, Node* frontNode, int pSize) {
     // Goal statement
     // Outputs solving metrics when the puzzle reaches its goal state
@@ -225,6 +280,10 @@ void generalSearch(vector<vector<int>> problem, int func, int pSize) {
 
     // While the queue isn't empty the puzzle will be expanded until the goal state is achieved
     while(pQ.size() > 0) {
+
+        if (func == 2 || func == 3) {
+            sortQueue(pQ);
+        }
 
         // Get node at front of the queue and then remove the node from the queue
         Node *frontNode = pQ.front();
