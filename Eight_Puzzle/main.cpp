@@ -38,7 +38,7 @@ void stateStatement(int expanded, Node* frontNode, int pSize) {
 
     /* if expanded == 0 : Outputs the puzzle of the starting node which is the inputted unsolved puzzle
        else : Outputs the puzzle of the node the program is currently at as well as the node's distance to
-              the goal/depth of the node (g(n)) and the node's cost to get to the node (h(n)) */
+              the goal/depth of the node (g(n)) and the node's cost to get to the node (h(n)). */
 
     if (expanded == 0) {
         cout << "Expanding state" << endl;
