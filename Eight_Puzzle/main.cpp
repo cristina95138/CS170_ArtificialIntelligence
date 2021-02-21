@@ -156,7 +156,7 @@ int misplacedHeuristic(vector<vector<int>> problem) {
 
 // Manhattan Heuristic Calculation
 // Manhattan Distance Formula: m = abs(x2-x1) + abs(y2-y1)
-// Manhattan heuristic is the manhattan distance of the goal pieces from the actual placement of the pieces
+// Manhattan heuristic is the Manhattan distance of the goal pieces from the actual placement of the pieces
 int manhattanHeuristic(vector<vector<int>> problem) {
     vector<vector<int>> goal = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
     int heuristic = 0; // Heuristic value
