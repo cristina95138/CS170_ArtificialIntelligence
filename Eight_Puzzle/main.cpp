@@ -117,6 +117,7 @@ void stateStatement(int expanded, Node* frontNode, int pSize) {
     }
 }
 
+// Expands current node into left, right, up, and down node children
 Node* expand(Node* node, set<vector<vector<int>>> repeats) {
     int row = 0;
     int column = 0;
@@ -300,18 +301,23 @@ void generalSearch(vector<vector<int>> problem, int func, int pSize) {
         // Print current node with its g(n) and h(n)
         stateStatement(expanded, frontNode, pSize);
 
+        // Expand node
         Node* expandFunc = expand(frontNode, pS);
         Node* child[] = {expandFunc->childLeft, expandFunc->childRight, expandFunc->childUp, expandFunc->childDown};
 
+        // Assign heuristics to expanded nodes
         for (unsigned i = 0; i < 4; ++i) {
             if (child[i] != nullptr) {
                 if (func == 1) {
+                    // Uniform Cost Search Heuristic
                     child[i]->cost = 0;
                     child[i]->depth = frontNode->depth + 1;
                 } else if (func == 2) {
+                    // Misplaced Tile Heuristic
                     child[i]->cost = misplacedHeuristic(child[i]->puzzle);
                     child[i]->depth = frontNode->depth + 1;
                 } else if (func == 3) {
+                    // Manhattan Distance Heuristic
                     child[i]->cost = manhattanHeuristic(child[i]->puzzle);
                     child[i]->depth = frontNode->depth + 1;
                 }
