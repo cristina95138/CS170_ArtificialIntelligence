@@ -201,6 +201,16 @@ void generalSearch(vector<vector<int>> problem, int func, int pSize) {
     queue<Node*> pQ; // Queue of nodes
     set<vector<vector<int>>> pS; // Set of repeats
 
+    // Based on the heuristic chosen by the user, the problem puzzle will be run through one of the algorithms and
+    // the heuristic value of the starting node will be determined
+    if (func == 1) {
+        heuristic = uniformCostSearchHeuristic(problem);
+    } else if (func == 2) {
+        heuristic = misplacedHeuristic(problem);
+    } else if (func == 3) {
+        heuristic = manhattanHeuristic(problem);
+    }
+
     // Create starting node
     Node* startNode  = new Node(problem);
     startNode->cost = heuristic;
@@ -213,19 +223,10 @@ void generalSearch(vector<vector<int>> problem, int func, int pSize) {
     ++maxSize;
     ++size;
 
-    // Based on the heuristic chosen by the user, the problem puzzle will be run through one of the algorithms and
-    // the heuristic value of the starting node will be determined
-    if (func == 1) {
-        heuristic = uniformCostSearchHeuristic(problem);
-    } else if (func == 2) {
-        heuristic = misplacedHeuristic(problem);
-    } else if (func == 3) {
-        heuristic = manhattanHeuristic(problem);
-    }
-
     // While the queue isn't empty the puzzle will be expanded until the goal state is achieved
     while(pQ.size() > 0) {
 
+        // Get node at front of the queue and then remove the node from the queue
         Node *frontNode = pQ.front();
         pQ.pop();
         --size;
