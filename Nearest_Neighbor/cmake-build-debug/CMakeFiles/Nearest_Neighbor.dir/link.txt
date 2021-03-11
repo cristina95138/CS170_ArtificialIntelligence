@@ -1,0 +1,1 @@
+/usr/bin/c++  -g -Wl,-search_paths_first -Wl,-headerpad_max_install_names  CMakeFiles/Nearest_Neighbor.dir/main.cpp.o  -o Nearest_Neighbor 
