@@ -5,66 +5,128 @@
 #include <vector>
 #include <utility>
 #include <math.h>
+#include <unordered_map>
 using namespace std;
 
-int leave_one_out_cross_validation(vector<pair<string, vector<int>>> data, set<int> currSet, set<int> featToAdd, int numVals) {
-    int numCorrClass = 0;
+double leave_one_out_cross_validation(vector<pair<int, vector<double>>> data, set<int> featToAdd, int numVals, int rows) {
+    double numCorrClass = 0.0;
     int nnDist = 0;
     int nnLoc = 0;
+    int nnLab = 0;
     int dist = 0;
+    double accuracy = 0.0;
+    int sum = 0;
 
-    for (unsigned i = 0; i < numVals; ++i) {
-        nnDist = INT_MAX;
-        nnLoc = INT_MAX;
-        for (unsigned j = 0; j < numVals; ++j) {
-            if () {
-                dist = sqrt();
-                if (dist <= nnDist) {
-                    nnDist = dist;
-                    ++nnLoc;
-                }
+    for (unsigned k = 1; k <= numVals; ++k) {
+        if (featToAdd.find(k) == featToAdd.end()) {
+            for (unsigned l = 0; l < data[k].second.size(); ++l) {
+                data[k].second[l] = 0;
             }
         }
     }
 
+    for (unsigned i = 0; i < rows; ++i) {
+        vector<double> objToClass;
+        int labObjToClass = data[0].second[i];
+
+        for (unsigned a = 1; a <= numVals; ++a) {
+            objToClass.push_back(data[a].second[i]);
+        }
+
+        nnDist = INT_MAX;
+        nnLoc = INT_MAX;
+        for (unsigned j = 0; j < rows; ++j) {
+            dist = 0;
+            if (i != j) {
+                for (unsigned b = 1; b <= numVals; ++b) {
+                    sum += pow(objToClass[b] - data[b].second[j], 2);
+                }
+                dist = sqrt(sum);
+                if (dist <= nnDist) {
+                    nnDist = dist;
+                    nnLoc = j + 1;
+                    nnLab = data[0].second[nnLoc-1];
+                }
+            }
+        }
+
+        if (labObjToClass == nnLab) {
+            ++numCorrClass;
+        }
+    }
+
+    accuracy = (numCorrClass/rows) * 100;
+
+    return accuracy;
 }
 
-void forwardSelection(vector<pair<string, vector<int>>> data, int numVals) {
+void forwardSelection(vector<pair<int, vector<double>>> data, int numVals, int rows) {
     set<int> currSetFeat;
     set<int> featToAdd;
-    int accuracy = 0;
-    int bestAccuracy = 0;
-    int feat = 0;
-    int max = 0;
-    int bestFeat = 0;
+    vector<int> best;
+    double accuracy = 0.0;
+    double bestAccuracy = 0.0;
+    double bestFeat = 0.0;
+    unordered_map<int, set<int>> max;
 
-    cout << "Beginning search." << endl;
+    cout << "Beginning search." << endl << endl;
 
-    for (unsigned i = 0; i < numVals; ++i) {
+    for (unsigned i = 1; i <= numVals; ++i) {
         bestAccuracy = 0;
-        for (unsigned j = 0; j < numVals; ++j) {
-            if (currSetFeat.find(j) != currSetFeat.end()) {
+        for (unsigned j = 1; j <= numVals; ++j) {
+            if (currSetFeat.find(j) == currSetFeat.end()) {
                 featToAdd = currSetFeat;
                 featToAdd.insert(j);
 
-                accuracy = leave_one_out_cross_validation(data, currSetFeat, featToAdd, numVals);
+                accuracy = leave_one_out_cross_validation(data, featToAdd, numVals, rows);
 
-                cout << "Using feature(s) {" << feat << "} accuracy is " << accuracy << "%" << endl;
+                cout << "   Using feature(s) {";
+                for (auto k = featToAdd.begin(); k != featToAdd.end(); ++k) {
+                    auto it = featToAdd.end();
+                    --it;
+                    if (k == it) {
+                        cout << *k;
+                    } else {
+                        cout << *k << ",";
+                    }
+                }
+                cout << "} accuracy is " << accuracy << "%" << endl;
 
-                if (accuracy > bestAccuracy) {
+                if (accuracy >= bestAccuracy) {
                     bestAccuracy = accuracy;
                     bestFeat = j;
                 }
             }
         }
+        cout << endl;
         currSetFeat.insert(bestFeat);
-        cout << "Feature set {" << bestFeat << "} was best, accuracy is " << bestAccuracy << "%" << endl;
+
+        if (best.size() > 1) {
+            if (best[i - 1] > bestAccuracy) {
+                cout << "(Warning, Accuracy has decreased! Continuing search in case of local maxima)" << endl << endl;
+            }
+        }
+
+        cout << "Feature set {";
+        for (auto k = currSetFeat.begin(); k != currSetFeat.end(); ++k) {
+            auto it = currSetFeat.end();
+            --it;
+            if (k == it) {
+                cout << *k;
+            } else {
+                cout << *k << ",";
+            }
+        }
+        cout << "} was best, accuracy is " << bestAccuracy << "%" << endl << endl;
+        max[bestAccuracy] = currSetFeat;
+        best.push_back(bestAccuracy);
     }
 
-    cout << "Finished search!! The best feature subset is {";
+    double maxAcc = *max_element(best.begin(), best.end());
 
-    for (auto k = currSetFeat.begin(); k != currSetFeat.end(); ++k) {
-        auto it = currSetFeat.end();
+    cout << "Finished search!! The best feature subset is {";
+    for (auto k = max[maxAcc].begin(); k != max[maxAcc].end(); ++k) {
+        auto it = max[maxAcc].end();
         --it;
         if (k == it) {
             cout << *k;
@@ -72,47 +134,108 @@ void forwardSelection(vector<pair<string, vector<int>>> data, int numVals) {
             cout << *k << ",";
         }
     }
+    cout << "}, which has an accuracy of " << maxAcc << "%" << endl << endl;
 
-    cout << "}, which has an accuracy of " << bestAccuracy << endl;
+    cout << "Running nearest neighbor with all " << numVals << " features, using “leaving-one-out” evaluation, I get an accuracy of " << maxAcc << "%";
 }
 
-void backwardElimination(vector<pair<string, vector<int>>> data, int numVals) {
+void backwardElimination(vector<pair<int, vector<double>>> data, int numVals, int rows) {
     set<int> currSetFeat;
     set<int> featToAdd;
-    int accuracy = 0;
-    int bestAccuracy = 0;
-    int feat = 0;
-    int max = 0;
-    int bestFeat = 0;
+    double accuracy = 0.0;
+    double bestAccuracy = 0.0;
+    double bestFeat = 0.0;
+    vector<int> best;
+    unordered_map<int, set<int>> max;
+
+    for (unsigned a = 1; a <= numVals; ++a) {
+        currSetFeat.insert(a);
+    }
 
     featToAdd = currSetFeat;
-    accuracy = leave_one_out_cross_validation(data, currSetFeat, featToAdd, numVals);
+    accuracy = leave_one_out_cross_validation(data, featToAdd, numVals, rows);
 
-    cout << "Using feature(s) {" << feat << "} accuracy is " << accuracy << "%" << endl;
-    cout << "Feature set {" << bestFeat << "} was best, accuracy is " << bestAccuracy << "%" << endl;
+    cout << "Beginning search." << endl << endl;
 
-    for (unsigned i = 0; i < numVals; ++i) {
+    cout << "   Using feature(s) {";
+    for (auto k = featToAdd.begin(); k != featToAdd.end(); ++k) {
+        auto it = featToAdd.end();
+        --it;
+        if (k == it) {
+            cout << *k;
+        } else {
+            cout << *k << ",";
+        }
+    }
+    cout << "} accuracy is " << accuracy << "%" << endl << endl;
+    cout << "Feature set {";
+    for (auto k = featToAdd.begin(); k != featToAdd.end(); ++k) {
+        auto it = featToAdd.end();
+        --it;
+        if (k == it) {
+            cout << *k;
+        } else {
+            cout << *k << ",";
+        }
+    }
+    cout << "} was best, accuracy is " << accuracy << "%" << endl << endl;
+
+    for (unsigned i = 1; i <= numVals; ++i) {
         bestAccuracy = 0;
-        for (unsigned j = 0; j < numVals; ++j) {
-            if (currSetFeat.find(j) == currSetFeat.end()) {
+        for (unsigned j = 1; j <= numVals; ++j) {
+            if (currSetFeat.find(j) != currSetFeat.end()) {
                 featToAdd = currSetFeat;
                 featToAdd.erase(j);
 
-                accuracy = leave_one_out_cross_validation(data, currSetFeat, featToAdd, numVals);
+                accuracy = leave_one_out_cross_validation(data, featToAdd, numVals, rows);
 
-                if (accuracy > bestAccuracy) {
+                cout << "   Using feature(s) {";
+                for (auto k = featToAdd.begin(); k != featToAdd.end(); ++k) {
+                    auto it = featToAdd.end();
+                    --it;
+                    if (k == it) {
+                        cout << *k;
+                    } else {
+                        cout << *k << ",";
+                    }
+                }
+                cout << "} accuracy is " << accuracy << "%" << endl;
+
+                if (accuracy >= bestAccuracy) {
                     bestAccuracy = accuracy;
                     bestFeat = j;
                 }
             }
         }
+        cout << endl;
         currSetFeat.erase(bestFeat);
+
+        if (best.size() > 1) {
+            if (best[i - 1] > bestAccuracy) {
+                cout << "(Warning, Accuracy has decreased! Continuing search in case of local maxima)" << endl << endl;
+            }
+        }
+
+        cout << "Feature set {";
+        for (auto k = currSetFeat.begin(); k != currSetFeat.end(); ++k) {
+            auto it = currSetFeat.end();
+            --it;
+            if (k == it) {
+                cout << *k;
+            } else {
+                cout << *k << ",";
+            }
+        }
+        cout << "} was best, accuracy is " << bestAccuracy << "%" << endl << endl;
+        max[bestAccuracy] = currSetFeat;
+        best.push_back(bestAccuracy);
     }
 
-    cout << "Feature set {" << bestFeat << "} was best, accuracy is " << bestAccuracy << "%" << endl;
+    double maxAcc = *max_element(best.begin(), best.end());
+
     cout << "Finished search!! The best feature subset is {";
-    for (auto k = currSetFeat.begin(); k != currSetFeat.end(); ++k) {
-        auto it = currSetFeat.end();
+    for (auto k = max[maxAcc].begin(); k != max[maxAcc].end(); ++k) {
+        auto it = max[maxAcc].end();
         --it;
         if (k == it) {
             cout << *k;
@@ -120,8 +243,9 @@ void backwardElimination(vector<pair<string, vector<int>>> data, int numVals) {
             cout << *k << ",";
         }
     }
-    cout <<  "}, which has an accuracy of " << bestAccuracy << endl;
+    cout << "}, which has an accuracy of " << maxAcc << "%" << endl << endl;
 
+    cout << "Running nearest neighbor with all " << numVals << " features, using “leaving-one-out” evaluation, I get an accuracy of " << maxAcc << "%";
 }
 
 int main() {
@@ -130,12 +254,16 @@ int main() {
     int numFeatures = 0;
     int numInstances = 0;
     int algorithm = 0;
-    int val = 0;
+    string val;
+    double valDouble = 0.0;
+    string num;
     string line;
     string col = "0";
     int colNum = 0;
     int numVals = 0;
-    vector<pair<string, vector<int>>> data;
+    int index = 0;
+    int rows = 0;
+    vector<pair<int, vector<double>>> data;
 
     cout << "Welcome to Cristina Lawson's Feature Selection Algorithm" << endl;
     cout << "Type in the name of the file to test: ";
@@ -152,20 +280,22 @@ int main() {
     if (in.good()) {
         getline(in, line);
         stringstream ss(line);
-
-        while (getline(ss, col, ',')) {
-            data.push_back({col, vector<int> {}});
+        while(ss >> num) {
+            data.push_back({colNum, vector<double>{}});
             ++colNum;
-            col = to_string(colNum);
         }
     }
 
+    in.clear();
+    in.seekg(0, ios::beg);
+
     while(getline(in, line)) {
         stringstream ss(line);
-        int index = 0;
+        index = 0;
 
         while(ss >> val) {
-            data.at(index).second.push_back(val);
+            valDouble = stod(val);
+            data.at(index).second.push_back(valDouble);
 
             if (ss.peek() == ',') {
                 ss.ignore();
@@ -174,6 +304,7 @@ int main() {
             ++index;
             ++numVals;
         }
+        ++rows;
     }
 
     cout << "Type the number of the algorithm you want to run." << endl << endl;
@@ -182,21 +313,19 @@ int main() {
     cin >> algorithm;
     cout << endl << endl;
 
-    numFeatures = colNum + 1;
-    numInstances = numVals + 1;
+    numFeatures = colNum - 1;
+    numInstances = numVals - rows;
 
     cout << "This dataset has " << numFeatures << " features (not including the class attribute), with " << numInstances << " instances." << endl << endl;
 
     cout << "Please wait while I normalize the data... ";
-    cout << "Done!";
+    cout << "Done!" << endl;
 
     if (algorithm == 1) {
-        forwardSelection(data, numVals);
+        forwardSelection(data, numFeatures, rows);
     } else if (algorithm == 2) {
-        backwardElimination(data, numVals);
+        backwardElimination(data, numFeatures, rows);
     }
-
-    cout << "Running nearest neighbor with all 4 features, using “leaving-one-out” evaluation, I get an accuracy of 75.4%";
 
     in.close();
 
