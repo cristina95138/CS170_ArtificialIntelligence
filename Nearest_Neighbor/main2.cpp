@@ -1,3 +1,7 @@
+//
+// Created by Cristina Lawson on 3/19/21.
+//
+
 #include <iostream>
 #include <set>
 #include <fstream>
@@ -21,7 +25,7 @@ double leave_one_out_cross_validation(vector<pair<int, vector<double>>> data, se
     for (unsigned k = 1; k <= numVals; ++k) {
         if (featToAdd.find(k) == featToAdd.end()) {
             for (unsigned l = 0; l < data[k].second.size(); ++l) {
-                data[k].second[l] = 0.0;
+                data[k].second[l] = 0;
             }
         }
     }
@@ -60,6 +64,102 @@ double leave_one_out_cross_validation(vector<pair<int, vector<double>>> data, se
 
     return accuracy;
 }
+
+void forwardSelectionThread1(vector<pair<int, vector<double>>> data, int numVals, int rows) {
+    forwardSelectionTemplate(data, numVals, rows, 0, 100);
+}
+
+void forwardSelectionThread2(vector<pair<int, vector<double>>> data, int numVals, int rows) {
+
+}
+
+void forwardSelectionThread3(vector<pair<int, vector<double>>> data, int numVals, int rows) {
+
+}
+
+void forwardSelectionThread4(vector<pair<int, vector<double>>> data, int numVals, int rows) {
+
+}
+
+void forwardSelectionTemplate(vector<pair<int, vector<double>>> data, int numVals, int rows, int start, int end) {
+    set<int> currSetFeat;
+    set<int> featToAdd;
+    vector<int> best;
+    double accuracy = 0.0;
+    double bestAccuracy = 0.0;
+    double bestFeat = 0.0;
+    unordered_map<int, set<int>> max;
+
+    cout << "Beginning search." << endl << endl;
+
+    for (unsigned i = 1; i <= numVals; ++i) {
+        bestAccuracy = 0;
+        for (unsigned j = 1; j <= numVals; ++j) {
+            if (currSetFeat.find(j) == currSetFeat.end()) {
+                featToAdd = currSetFeat;
+                featToAdd.insert(j);
+
+                accuracy = leave_one_out_cross_validation(data, featToAdd, numVals, rows);
+
+                cout << "   Using feature(s) {";
+                for (auto k = featToAdd.begin(); k != featToAdd.end(); ++k) {
+                    auto it = featToAdd.end();
+                    --it;
+                    if (k == it) {
+                        cout << *k;
+                    } else {
+                        cout << *k << ",";
+                    }
+                }
+                cout << "} accuracy is " << accuracy << "%" << endl;
+
+                if (accuracy >= bestAccuracy) {
+                    bestAccuracy = accuracy;
+                    bestFeat = j;
+                }
+            }
+        }
+        cout << endl;
+        currSetFeat.insert(bestFeat);
+
+        if (best.size() > 1) {
+            if (best[i - 1] > bestAccuracy) {
+                cout << "(Warning, Accuracy has decreased! Continuing search in case of local maxima)" << endl << endl;
+            }
+        }
+
+        cout << "Feature set {";
+        for (auto k = currSetFeat.begin(); k != currSetFeat.end(); ++k) {
+            auto it = currSetFeat.end();
+            --it;
+            if (k == it) {
+                cout << *k;
+            } else {
+                cout << *k << ",";
+            }
+        }
+        cout << "} was best, accuracy is " << bestAccuracy << "%" << endl << endl;
+        max[bestAccuracy] = currSetFeat;
+        best.push_back(bestAccuracy);
+    }
+
+    double maxAcc = *max_element(best.begin(), best.end());
+
+    cout << "Finished search!! The best feature subset is {";
+    for (auto k = max[maxAcc].begin(); k != max[maxAcc].end(); ++k) {
+        auto it = max[maxAcc].end();
+        --it;
+        if (k == it) {
+            cout << *k;
+        } else {
+            cout << *k << ",";
+        }
+    }
+    cout << "}, which has an accuracy of " << maxAcc << "%" << endl << endl;
+
+    cout << "Running nearest neighbor with all " << numVals << " features, using “leaving-one-out” evaluation, I get an accuracy of " << maxAcc << "%";
+}
+
 
 void forwardSelection(vector<pair<int, vector<double>>> data, int numVals, int rows) {
     set<int> currSetFeat;
