@@ -86,12 +86,16 @@ void forwardSelection(vector<pair<int, vector<double>>> data, int numVals, int r
     for (unsigned i = 1; i <= numVals; ++i) {
         bestAccuracy = 0;
         for (unsigned j = 1; j <= numVals; ++j) {
+            // If the column is not in the data structure then ass it
             if (currSetFeat.find(j) == currSetFeat.end()) {
                 featToAdd = currSetFeat;
+                // Add the row
                 featToAdd.insert(j);
 
+                // Calculate distance accuracy
                 accuracy = leave_one_out_cross_validation(data, featToAdd, numVals, rows);
 
+                // Output all possible accuracies
                 cout << "   Using feature(s) {";
                 for (auto k = featToAdd.begin(); k != featToAdd.end(); ++k) {
                     auto it = featToAdd.end();
@@ -104,6 +108,7 @@ void forwardSelection(vector<pair<int, vector<double>>> data, int numVals, int r
                 }
                 cout << "} accuracy is " << fixed << setprecision(1) << accuracy << "%" << endl;
 
+                // Find best accuracy
                 if (accuracy >= bestAccuracy) {
                     bestAccuracy = accuracy;
                     bestFeat = j;
@@ -111,14 +116,17 @@ void forwardSelection(vector<pair<int, vector<double>>> data, int numVals, int r
             }
         }
         cout << endl;
+        // Insert best accuracy
         currSetFeat.insert(bestFeat);
 
+        // Output that the accuracy has loweres
         if (best.size() > 1) {
             if (best[i - 1] > bestAccuracy) {
                 cout << "(Warning, Accuracy has decreased! Continuing search in case of local maxima)" << endl << endl;
             }
         }
 
+        // Output the best of the calculated sets iterated above
         cout << "Feature set {";
         for (auto k = currSetFeat.begin(); k != currSetFeat.end(); ++k) {
             auto it = currSetFeat.end();
@@ -130,12 +138,17 @@ void forwardSelection(vector<pair<int, vector<double>>> data, int numVals, int r
             }
         }
         cout << "} was best, accuracy is " << fixed << setprecision(1) << bestAccuracy << "%" << endl << endl;
+
+        // Unordered map of best accuracies from above
         max[bestAccuracy] = currSetFeat;
+        // Vector so that we can find the best accuracy for output once the map is fully populated
         best.push_back(bestAccuracy);
     }
 
+    // Find the maximum accuracy
     double maxAcc = *max_element(best.begin(), best.end());
 
+    // Output the absolute best accuracy
     cout << "Finished search!! The best feature subset is {";
     for (auto k = max[maxAcc].begin(); k != max[maxAcc].end(); ++k) {
         auto it = max[maxAcc].end();
@@ -148,6 +161,7 @@ void forwardSelection(vector<pair<int, vector<double>>> data, int numVals, int r
     }
     cout << "}, which has an accuracy of " << fixed << setprecision(1) << maxAcc << "%" << endl << endl;
 
+    // Output the absolute best accuracy again
     cout << "Running nearest neighbor with all " << numVals << " features, using “leaving-one-out” evaluation, I get an accuracy of " << fixed << setprecision(1) << maxAcc << "%";
 }
 
@@ -192,7 +206,7 @@ void backwardElimination(vector<pair<int, vector<double>>> data, int numVals, in
     }
     cout << "} was best, accuracy is " << fixed << setprecision(1) << accuracy << "%" << endl << endl;
 
-    for (unsigned i = 1; i <= numVals; ++i) {
+    for (unsigned i = 2; i <= numVals; ++i) {
         bestAccuracy = 0;
         for (unsigned j = 1; j <= numVals; ++j) {
             if (currSetFeat.find(j) != currSetFeat.end()) {
@@ -275,13 +289,14 @@ int main() {
     int numVals = 0;
     int index = 0;
     int rows = 0;
-    vector<pair<int, vector<double>>> data;
+    vector<pair<int, vector<double>>> data; // Data structure for file data
 
     cout << "Welcome to Cristina Lawson's Feature Selection Algorithm" << endl;
     cout << "Type in the name of the file to test: ";
     cin >> file;
-    cout << endl << endl;
+    cout << endl;
 
+    // Reading in the file
     in.open(file);
 
     if (!in.is_open()) {
@@ -289,6 +304,7 @@ int main() {
         exit(1);
     }
 
+    // Creating column in data vector data structure
     if (in.good()) {
         getline(in, line);
         stringstream ss(line);
@@ -298,9 +314,11 @@ int main() {
         }
     }
 
+    // Restarting getline
     in.clear();
     in.seekg(0, ios::beg);
 
+    // Reading in rows data into the data structure
     while(getline(in, line)) {
         stringstream ss(line);
         index = 0;
@@ -323,7 +341,7 @@ int main() {
     cout << "1) Forward Selection" << endl
          << "2) Backward Elimination" << endl;
     cin >> algorithm;
-    cout << endl << endl;
+    cout << endl;
 
     numFeatures = colNum - 1;
     numInstances = numVals - rows;
@@ -333,6 +351,7 @@ int main() {
     cout << "Please wait while I normalize the data... ";
     cout << "Done!" << endl << endl;
 
+    // Program timer
     auto start = chrono::steady_clock::now();
 
     if (algorithm == 1) {
