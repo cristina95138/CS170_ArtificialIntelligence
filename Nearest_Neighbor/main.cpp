@@ -6,43 +6,54 @@
 #include <utility>
 #include <math.h>
 #include <unordered_map>
+#include <algorithm>
 #include <chrono>
+#include <numeric>
+
 using namespace std;
 
 double leave_one_out_cross_validation(vector<pair<int, vector<double>>> data, set<int> featToAdd, int numVals, int rows) {
     double numCorrClass = 0.0;
-    int nnDist = 0;
-    int nnLoc = 0;
-    int nnLab = 0;
-    int dist = 0;
+    double nnDist = 0.0;
+    double nnLoc = 0.0;
+    double nnLab = 0.0;
+    double dist = 0.0;
     double accuracy = 0.0;
-    int sum = 0;
+    double sum = 0.0;
 
-    for (unsigned k = 1; k <= numVals; ++k) {
+    for (double k = 1; k <= numVals; ++k) {
         if (featToAdd.find(k) == featToAdd.end()) {
-            for (unsigned l = 0; l < data[k].second.size(); ++l) {
+            for (double l = 0; l < data[k].second.size(); ++l) {
                 data[k].second[l] = 0.0;
             }
         }
     }
 
-    for (unsigned i = 0; i < rows; ++i) {
+    for (double i = 0; i < rows; ++i) {
         vector<double> objToClass;
-        int labObjToClass = data[0].second[i];
+        double labObjToClass = data[0].second[i];
 
-        for (unsigned a = 1; a <= numVals; ++a) {
+        for (double a = 1; a <= numVals; ++a) {
             objToClass.push_back(data[a].second[i]);
         }
 
         nnDist = INT_MAX;
         nnLoc = INT_MAX;
-        for (unsigned j = 0; j < rows; ++j) {
+        for (double j = 0; j < rows; ++j) {
             dist = 0;
+            sum = 0;
             if (i != j) {
-                for (unsigned b = 1; b <= numVals; ++b) {
-                    sum += pow(objToClass[b] - data[b].second[j], 2);
+                vector<double> obj;
+
+                for (double b = 1; b <= numVals; ++b) {
+                   obj.push_back(data[b].second[j]);
+                }
+
+                for (double c = 0; c < objToClass.size(); ++c) {
+                    sum += pow(objToClass[c] - obj[c], 2);
                 }
                 dist = sqrt(sum);
+
                 if (dist <= nnDist) {
                     nnDist = dist;
                     nnLoc = j + 1;
@@ -56,7 +67,7 @@ double leave_one_out_cross_validation(vector<pair<int, vector<double>>> data, se
         }
     }
 
-    accuracy = (numCorrClass/rows) * 100;
+    accuracy = (numCorrClass/rows) * 100.0;
 
     return accuracy;
 }
@@ -91,7 +102,7 @@ void forwardSelection(vector<pair<int, vector<double>>> data, int numVals, int r
                         cout << *k << ",";
                     }
                 }
-                cout << "} accuracy is " << accuracy << "%" << endl;
+                cout << "} accuracy is " << fixed << setprecision(1) << accuracy << "%" << endl;
 
                 if (accuracy >= bestAccuracy) {
                     bestAccuracy = accuracy;
@@ -118,7 +129,7 @@ void forwardSelection(vector<pair<int, vector<double>>> data, int numVals, int r
                 cout << *k << ",";
             }
         }
-        cout << "} was best, accuracy is " << bestAccuracy << "%" << endl << endl;
+        cout << "} was best, accuracy is " << fixed << setprecision(1) << bestAccuracy << "%" << endl << endl;
         max[bestAccuracy] = currSetFeat;
         best.push_back(bestAccuracy);
     }
@@ -135,9 +146,9 @@ void forwardSelection(vector<pair<int, vector<double>>> data, int numVals, int r
             cout << *k << ",";
         }
     }
-    cout << "}, which has an accuracy of " << maxAcc << "%" << endl << endl;
+    cout << "}, which has an accuracy of " << fixed << setprecision(1) << maxAcc << "%" << endl << endl;
 
-    cout << "Running nearest neighbor with all " << numVals << " features, using “leaving-one-out” evaluation, I get an accuracy of " << maxAcc << "%";
+    cout << "Running nearest neighbor with all " << numVals << " features, using “leaving-one-out” evaluation, I get an accuracy of " << fixed << setprecision(1) << maxAcc << "%";
 }
 
 void backwardElimination(vector<pair<int, vector<double>>> data, int numVals, int rows) {
@@ -168,7 +179,7 @@ void backwardElimination(vector<pair<int, vector<double>>> data, int numVals, in
             cout << *k << ",";
         }
     }
-    cout << "} accuracy is " << accuracy << "%" << endl << endl;
+    cout << "} accuracy is " << fixed << setprecision(1) << accuracy << "%" << endl << endl;
     cout << "Feature set {";
     for (auto k = featToAdd.begin(); k != featToAdd.end(); ++k) {
         auto it = featToAdd.end();
@@ -179,7 +190,7 @@ void backwardElimination(vector<pair<int, vector<double>>> data, int numVals, in
             cout << *k << ",";
         }
     }
-    cout << "} was best, accuracy is " << accuracy << "%" << endl << endl;
+    cout << "} was best, accuracy is " << fixed << setprecision(1) << accuracy << "%" << endl << endl;
 
     for (unsigned i = 1; i <= numVals; ++i) {
         bestAccuracy = 0;
@@ -200,7 +211,7 @@ void backwardElimination(vector<pair<int, vector<double>>> data, int numVals, in
                         cout << *k << ",";
                     }
                 }
-                cout << "} accuracy is " << accuracy << "%" << endl;
+                cout << "} accuracy is " << fixed << setprecision(1) << accuracy << "%" << endl;
 
                 if (accuracy >= bestAccuracy) {
                     bestAccuracy = accuracy;
@@ -227,7 +238,7 @@ void backwardElimination(vector<pair<int, vector<double>>> data, int numVals, in
                 cout << *k << ",";
             }
         }
-        cout << "} was best, accuracy is " << bestAccuracy << "%" << endl << endl;
+        cout << "} was best, accuracy is " << fixed << setprecision(1) << bestAccuracy << "%" << endl << endl;
         max[bestAccuracy] = currSetFeat;
         best.push_back(bestAccuracy);
     }
@@ -244,9 +255,9 @@ void backwardElimination(vector<pair<int, vector<double>>> data, int numVals, in
             cout << *k << ",";
         }
     }
-    cout << "}, which has an accuracy of " << maxAcc << "%" << endl << endl;
+    cout << "}, which has an accuracy of " << fixed << setprecision(1) << maxAcc << "%" << endl << endl;
 
-    cout << "Running nearest neighbor with all " << numVals << " features, using “leaving-one-out” evaluation, I get an accuracy of " << maxAcc << "%";
+    cout << "Running nearest neighbor with all " << numVals << " features, using “leaving-one-out” evaluation, I get an accuracy of " << fixed << setprecision(1) << maxAcc << "%";
 }
 
 int main() {
@@ -320,7 +331,7 @@ int main() {
     cout << "This dataset has " << numFeatures << " features (not including the class attribute), with " << numInstances << " instances." << endl << endl;
 
     cout << "Please wait while I normalize the data... ";
-    cout << "Done!" << endl;
+    cout << "Done!" << endl << endl;
 
     auto start = chrono::steady_clock::now();
 
@@ -333,6 +344,8 @@ int main() {
     in.close();
 
     auto end = chrono::steady_clock::now();
+
+    cout << endl << endl;
 
     cout << "CPU time in nanoseconds: "
          << chrono::duration_cast<chrono::nanoseconds>(end - start).count()
