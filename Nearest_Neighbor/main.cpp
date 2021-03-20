@@ -21,6 +21,7 @@ double leave_one_out_cross_validation(vector<pair<int, vector<double>>> data, se
     double accuracy = 0.0;
     double sum = 0.0;
 
+    // Makes non-included columns 0.0
     for (double k = 1; k <= numVals; ++k) {
         if (featToAdd.find(k) == featToAdd.end()) {
             for (double l = 0; l < data[k].second.size(); ++l) {
@@ -29,7 +30,9 @@ double leave_one_out_cross_validation(vector<pair<int, vector<double>>> data, se
         }
     }
 
+    // Iterate thorough all rows and compute the Euclidean Distance
     for (double i = 0; i < rows; ++i) {
+        // Assign object labels and attributes
         vector<double> objToClass;
         double labObjToClass = data[0].second[i];
 
@@ -42,6 +45,8 @@ double leave_one_out_cross_validation(vector<pair<int, vector<double>>> data, se
         for (double j = 0; j < rows; ++j) {
             dist = 0;
             sum = 0;
+
+            // If the rows aren't equal then compute the distance
             if (i != j) {
                 vector<double> obj;
 
@@ -49,11 +54,13 @@ double leave_one_out_cross_validation(vector<pair<int, vector<double>>> data, se
                    obj.push_back(data[b].second[j]);
                 }
 
+                // Euclidean Distance computation
                 for (double c = 0; c < objToClass.size(); ++c) {
                     sum += pow(objToClass[c] - obj[c], 2);
                 }
                 dist = sqrt(sum);
 
+                // Find closest neighbor based on distance
                 if (dist <= nnDist) {
                     nnDist = dist;
                     nnLoc = j + 1;
@@ -62,11 +69,13 @@ double leave_one_out_cross_validation(vector<pair<int, vector<double>>> data, se
             }
         }
 
+        // Check if the class labels are the same
         if (labObjToClass == nnLab) {
             ++numCorrClass;
         }
     }
 
+    // Compute accuracy based on the percentage of correct labels
     accuracy = (numCorrClass/rows) * 100.0;
 
     return accuracy;
@@ -86,7 +95,7 @@ void forwardSelection(vector<pair<int, vector<double>>> data, int numVals, int r
     for (unsigned i = 1; i <= numVals; ++i) {
         bestAccuracy = 0;
         for (unsigned j = 1; j <= numVals; ++j) {
-            // If the column is not in the data structure then ass it
+            // If the column is not in the data structure then add it
             if (currSetFeat.find(j) == currSetFeat.end()) {
                 featToAdd = currSetFeat;
                 // Add the row
@@ -119,7 +128,7 @@ void forwardSelection(vector<pair<int, vector<double>>> data, int numVals, int r
         // Insert best accuracy
         currSetFeat.insert(bestFeat);
 
-        // Output that the accuracy has loweres
+        // Output that the accuracy has lowered
         if (best.size() > 1) {
             if (best[i - 1] > bestAccuracy) {
                 cout << "(Warning, Accuracy has decreased! Continuing search in case of local maxima)" << endl << endl;
@@ -174,15 +183,19 @@ void backwardElimination(vector<pair<int, vector<double>>> data, int numVals, in
     vector<int> best;
     unordered_map<int, set<int>> max;
 
+    // Add columns to vector
     for (unsigned a = 1; a <= numVals; ++a) {
         currSetFeat.insert(a);
     }
 
     featToAdd = currSetFeat;
+
+    // Calculate distance accuracy
     accuracy = leave_one_out_cross_validation(data, featToAdd, numVals, rows);
 
     cout << "Beginning search." << endl << endl;
 
+    // Output all possible accuracies
     cout << "   Using feature(s) {";
     for (auto k = featToAdd.begin(); k != featToAdd.end(); ++k) {
         auto it = featToAdd.end();
@@ -194,6 +207,8 @@ void backwardElimination(vector<pair<int, vector<double>>> data, int numVals, in
         }
     }
     cout << "} accuracy is " << fixed << setprecision(1) << accuracy << "%" << endl << endl;
+
+    // Output the best of the calculated sets iterated above
     cout << "Feature set {";
     for (auto k = featToAdd.begin(); k != featToAdd.end(); ++k) {
         auto it = featToAdd.end();
@@ -209,12 +224,16 @@ void backwardElimination(vector<pair<int, vector<double>>> data, int numVals, in
     for (unsigned i = 2; i <= numVals; ++i) {
         bestAccuracy = 0;
         for (unsigned j = 1; j <= numVals; ++j) {
+            // If the column is in the data structure then add it
             if (currSetFeat.find(j) != currSetFeat.end()) {
                 featToAdd = currSetFeat;
+                // Erase the row
                 featToAdd.erase(j);
 
+                // Calculate distance accuracy
                 accuracy = leave_one_out_cross_validation(data, featToAdd, numVals, rows);
 
+                // Output all possible accuracies
                 cout << "   Using feature(s) {";
                 for (auto k = featToAdd.begin(); k != featToAdd.end(); ++k) {
                     auto it = featToAdd.end();
@@ -227,6 +246,7 @@ void backwardElimination(vector<pair<int, vector<double>>> data, int numVals, in
                 }
                 cout << "} accuracy is " << fixed << setprecision(1) << accuracy << "%" << endl;
 
+                // Find worst accuracy
                 if (accuracy >= bestAccuracy) {
                     bestAccuracy = accuracy;
                     bestFeat = j;
@@ -234,14 +254,17 @@ void backwardElimination(vector<pair<int, vector<double>>> data, int numVals, in
             }
         }
         cout << endl;
+        // Erase worst accuracy
         currSetFeat.erase(bestFeat);
 
+        // Output that the accuracy has lowered
         if (best.size() > 1) {
             if (best[i - 1] > bestAccuracy) {
                 cout << "(Warning, Accuracy has decreased! Continuing search in case of local maxima)" << endl << endl;
             }
         }
 
+        // Output the best of the calculated sets iterated above
         cout << "Feature set {";
         for (auto k = currSetFeat.begin(); k != currSetFeat.end(); ++k) {
             auto it = currSetFeat.end();
@@ -253,12 +276,17 @@ void backwardElimination(vector<pair<int, vector<double>>> data, int numVals, in
             }
         }
         cout << "} was best, accuracy is " << fixed << setprecision(1) << bestAccuracy << "%" << endl << endl;
+
+        // Unordered map of best accuracies from above
         max[bestAccuracy] = currSetFeat;
+        // Vector so that we can find the best accuracy for output once the map is fully populated
         best.push_back(bestAccuracy);
     }
 
+    // Find the maximum accuracy
     double maxAcc = *max_element(best.begin(), best.end());
 
+    // Output the absolute best accuracy
     cout << "Finished search!! The best feature subset is {";
     for (auto k = max[maxAcc].begin(); k != max[maxAcc].end(); ++k) {
         auto it = max[maxAcc].end();
@@ -271,6 +299,7 @@ void backwardElimination(vector<pair<int, vector<double>>> data, int numVals, in
     }
     cout << "}, which has an accuracy of " << fixed << setprecision(1) << maxAcc << "%" << endl << endl;
 
+    // Output the absolute best accuracy again
     cout << "Running nearest neighbor with all " << numVals << " features, using “leaving-one-out” evaluation, I get an accuracy of " << fixed << setprecision(1) << maxAcc << "%";
 }
 
