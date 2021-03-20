@@ -8,7 +8,6 @@
 #include <unordered_map>
 #include <algorithm>
 #include <chrono>
-#include <numeric>
 
 using namespace std;
 
@@ -42,6 +41,7 @@ double leave_one_out_cross_validation(vector<pair<int, vector<double>>> data, se
 
         nnDist = INT_MAX;
         nnLoc = INT_MAX;
+
         for (double j = 0; j < rows; ++j) {
             dist = 0;
             sum = 0;
@@ -326,6 +326,7 @@ int main() {
     cout << endl;
 
     // Reading in the file
+    // Referenced https://www.gormanalysis.com/blog/reading-and-writing-csv-files-with-cpp/
     in.open(file);
 
     if (!in.is_open()) {
